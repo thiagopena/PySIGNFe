@@ -16,7 +16,7 @@ if __name__ == '__main__':
     with open(caminho_certificado, 'rb') as f:
         arquivo = f.read()
     
-    info_certificado = nova_nfe.extrair_certificado_a1(arquivo, "associacao")
+    info_certificado = mynfse.extrair_certificado_a1(arquivo, "associacao")
     
     lista_rps = []
     rps = Rps_10()

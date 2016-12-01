@@ -1,0 +1,8 @@
+pyOpenSSL
+pytz
+lxml
+signxml
+reportlab
+cryptography
+six
+https://github.com/thiagopena/geraldo/archive/master.zip

@@ -33,9 +33,10 @@ import unicodedata
 import re
 import pytz
 
-NAMESPACE_NFE = u'http://www.portalfiscal.inf.br/nfe'
-NAMESPACE_SIG = u'http://www.w3.org/2000/09/xmldsig#'
+NAMESPACE_NFE  = u'http://www.portalfiscal.inf.br/nfe'
+NAMESPACE_SIG  = u'http://www.w3.org/2000/09/xmldsig#'
 NAMESPACE_NFSE = u'http://www.abrasf.org.br/nfse.xsd'
+NAMESPACE_CTE  = u'http://www.portalfiscal.inf.br/cte'
 
 ABERTURA = u'<?xml version="1.0" encoding="UTF-8"?>'
 
@@ -90,12 +91,16 @@ class NohXML(object):
     def _preenche_namespace_nfse(self, tag):
         tag = u'/nfse:'.join(tag.split(u'/')).replace(u'/nfse:/nfse:', u'//nfse:').replace(u'nfse:sig:', u'sig:')
         return tag
+    def _preenche_namespace_cte(self, tag):
+        tag = u'/cte:'.join(tag.split(u'/')).replace(u'/cte:/cte:', u'//cte:').replace(u'cte:sig:', u'sig:')
+        return tag
 
-    def _le_nohs(self, tag, ns=None):
+    def _le_nohs(self, tag, ns=None, sigla_ns=None):
         #
         # Tenta ler a tag sem os namespaces
         # Necessário para ler corretamente as tags de grupo reenraizadas
         #
+        
         try:
             nohs = self._xml.xpath(tag)
             if len(nohs) >= 1:
@@ -106,27 +111,31 @@ class NohXML(object):
         #
         # Não deu certo, tem que botar mesmo os namespaces
         #
-        namespaces = {u'nfse': NAMESPACE_NFSE, u'nfe': NAMESPACE_NFE, u'sig': NAMESPACE_SIG}
+        namespaces = {u'nfse': NAMESPACE_NFSE, u'nfe': NAMESPACE_NFE, u'cte':NAMESPACE_CTE, u'sig': NAMESPACE_SIG}
 
         if ns is not None:
             namespaces[u'res'] = ns
         
         if not tag.startswith(u'//*/res'):
-            if '[nfse]' in tag:
+            if '[nfse]' in tag or ns == NAMESPACE_NFSE or sigla_ns == 'nfse':
                 tag = tag.replace(u'[nfse]',u'')
                 tag = self._preenche_namespace_nfse(tag)
+            elif '[cte]' in tag or ns == NAMESPACE_CTE or u'//CTe' in tag or sigla_ns == 'cte':
+                tag = tag.replace(u'[cte]',u'')
+                tag = self._preenche_namespace_cte(tag)
             else:
-                tag = self._preenche_namespace(tag)        
-            
+                tag = self._preenche_namespace(tag)
+        
+        #print('tag: ', tag)
         nohs = self._xml.xpath(tag, namespaces=namespaces)
-
+        
         if len(nohs) >= 1:
             return nohs
         else:
             return None
 
     def _le_noh(self, tag, ns=None, ocorrencia=1):
-        nohs = self._le_nohs(tag, ns)
+        nohs = self._le_nohs(tag, ns=ns)
 
         if (nohs is not None) and (len(nohs) >= ocorrencia):
             return nohs[ocorrencia-1]
@@ -135,7 +144,7 @@ class NohXML(object):
 
     def _le_tag(self, tag, propriedade=None, ns=None, ocorrencia=1):
         noh = self._le_noh(tag,  ns, ocorrencia)
-
+        
         if noh is None:
             valor = u''
         else:
@@ -202,9 +211,11 @@ class TagCaracter(NohXML):
         self.nome = u''
         self._valor_string = u''
         self.obrigatorio = True
+        #[minimo, maximo, tamanho fixo(padding)]
         self.tamanho = [None, None, None]
         self.propriedade = None
         self.namespace = None
+        self.namespace_obrigatorio = True
         self.alertas = []
         self.raiz = None
 
@@ -276,8 +287,9 @@ class TagCaracter(NohXML):
             texto = u''
         else:
             texto = u'<%s' % self.nome
-
-            if self.namespace:
+            
+            #if self.namespace:
+            if self.namespace and self.namespace_obrigatorio:
                 texto += u' xmlns="%s"' % self.namespace
 
             if self.propriedade:
@@ -296,8 +308,15 @@ class TagCaracter(NohXML):
         return self.__unicode__()
 
     def set_xml(self, arquivo, ocorrencia=1):
+        #Improvisando para acertar o namespace...
+        tag_id = u''
+        if NAMESPACE_NFSE in arquivo:
+            tag_id = u'[nfse]'
+        elif NAMESPACE_CTE in arquivo:
+            tag_id = u'[cte]'
+            
         if self._le_xml(arquivo):
-            self.valor = self._le_tag(self.raiz + u'/' + self.nome, propriedade=self.propriedade, ns=self.namespace, ocorrencia=ocorrencia)
+            self.valor = self._le_tag(tag_id + self.raiz + u'/' + self.nome, propriedade=self.propriedade, ns=self.namespace, ocorrencia=ocorrencia)
 
     xml = property(get_xml, set_xml)
 
@@ -814,10 +833,10 @@ class XMLNFe(NohXML):
 
         return esquema.error_log
         
-    def le_grupo(self, raiz_grupo, classe_grupo):
+    def le_grupo(self, raiz_grupo, classe_grupo, sigla_ns=None):
         tags = []
 
-        grupos = self._le_nohs(raiz_grupo)
+        grupos = self._le_nohs(raiz_grupo, sigla_ns=sigla_ns)
                 
         if grupos is not None:
             tags = [classe_grupo() for g in grupos]

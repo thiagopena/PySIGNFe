@@ -91,25 +91,38 @@ class Certificado(object):
         #Le a chave de acesso para a assinatura e retira a TAG Signature do documento
         chave_de_acesso = None
         
-        for child in xml.iter():
-            if "infNFe" in child.tag:
-                chave_de_acesso = child.get('Id')
-            elif u'infCanc' in child.tag:
-                chave_de_acesso = child.get('Id')
-            elif u'infEvento' in child.tag:
-                chave_de_acesso = child.get('Id')
-            elif u'infInut' in child.tag:
-                chave_de_acesso = child.get('Id')
-            elif u'LoteRps' in child.tag:
-                chave_de_acesso = child.get('Id')
-            elif u'InfRps' in child.tag:
-                chave_de_acesso = child.get('Id')
-            elif u'InfPedidoCancelamento' in child.tag:
-                chave_de_acesso = child.get('Id')
-            if "Signature" in child.tag:
-                #Remover TAG Signature, se tiver
-                #xml.remove(child)
-                pass
+        #CTe
+        if NAMESPACE_CTE in str(xml):
+            for child in xml.iter():
+                if u'infCte' in child.tag:
+                    chave_de_acesso = child.get('Id')
+                elif u'infInut' in child.tag:
+                    chave_de_acesso = child.get('Id')
+                elif u'infEvento' in child.tag:
+                    chave_de_acesso = child.get('Id')
+        #NFe/NFSe
+        else:
+            for child in xml.iter():
+                #NFe
+                if "infNFe" in child.tag:
+                    chave_de_acesso = child.get('Id')
+                elif u'infCanc' in child.tag:
+                    chave_de_acesso = child.get('Id')
+                elif u'infEvento' in child.tag:
+                    chave_de_acesso = child.get('Id')
+                elif u'infInut' in child.tag:
+                    chave_de_acesso = child.get('Id')
+                #NFSe
+                elif u'LoteRps' in child.tag:
+                    chave_de_acesso = child.get('Id')
+                elif u'InfRps' in child.tag:
+                    chave_de_acesso = child.get('Id')
+                elif u'InfPedidoCancelamento' in child.tag:
+                    chave_de_acesso = child.get('Id')
+                #if "Signature" in child.tag:
+                    #Remover TAG Signature, se tiver
+                    #xml.remove(child)
+                #    pass
         
         return chave_de_acesso
         
@@ -120,7 +133,7 @@ class Certificado(object):
         #buscando chave de acesso no documento e retiranto TAG Signature
         chave_de_acesso = self._ler_chave_acesso(doc_xml)
         if chave_de_acesso is None:
-            raise ValueError('Este arquivo não possui Chave de Acesso.')
+            raise ValueError('Nao foi possivel encontrar a Tag para a assinatura.')
         
         #String para bytes para a leitura no signxml
         chave = self.chave.encode('utf-8')

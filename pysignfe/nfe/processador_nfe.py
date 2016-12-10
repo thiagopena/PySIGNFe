@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from http.client import HTTPSConnection, HTTPResponse
-from OpenSSL import crypto
+#from OpenSSL import crypto
 import socket
 import ssl
 from datetime import datetime
@@ -65,7 +65,7 @@ from .danfe.danfepaisagem import *
 
 from io import StringIO
 import pytz
-import tempfile
+#import tempfile
 
 
 class ProcessoNFe(object):
@@ -581,7 +581,7 @@ class ProcessadorNFe(object):
         if ambiente is None:
             ambiente = self.ambiente
 
-        self.caminho = self.monta_caminho_nfe_cnpj(ambiente=ambiente, cnpj=cnpj)
+        self.caminho = self.monta_caminho_nfe(ambiente=ambiente, chave_nfe=chave_nfe)
 
         envio.infEvento.tpAmb.valor = ambiente
         envio.infEvento.cOrgao.valor = UF_CODIGO[self.estado]
@@ -897,7 +897,7 @@ class ProcessadorNFe(object):
             novos_arquivos.append((novo_arquivo_nome, novo_arquivo))
         
             caminho_original = self.caminho
-            self.caminho = self.caminho + u'ArquivosXML/ConsultaStatusServidor/'
+            self.caminho = self.caminho + u'ArquivosXML/ConsultaStatusServidorNFe/'
             
             self.salvar_novos_arquivos(novos_arquivos=novos_arquivos)
             self.caminho = caminho_original
@@ -940,15 +940,15 @@ class ProcessadorNFe(object):
                 #
                 # Se a nota já constar na SEFAZ
                 #
-                if not (
-                    ((self.versao == u'1.10') and (proc_consulta.resposta.infProt.cStat.valor in (u'217', u'999',)))
+                if (
+                    ((self.versao == '1.10') and (proc_consulta.resposta.infProt.cStat.valor in ('217', '999',)))
                     or
-                    ((self.versao in (u'2.00',u'3.10')) and (proc_consulta.resposta.cStat.valor in (u'217', u'999',)))
+                    ((self.versao in ['2.00', '3.10']) and (proc_consulta.resposta.cStat.valor in ('100', '150', '110', '301', '302')))
                 ):
                     #
                     # Interrompe todo o processo
                     #
-                    print("!! Notas ja foram enviadas, status: "+ proc_consulta.resposta.cStat.valor +". Encerrando processo...")
+                    print(" !! Status: "+ proc_consulta.resposta.cStat.valor +". Encerrando processo...")
                     return
 
             #
@@ -1050,6 +1050,7 @@ class ProcessadorNFe(object):
                 novo_arquivo_nome = novo_arquivo_nome
                 novo_arquivo = processo.xml.encode('utf-8')
                 novos_arquivos.append((novo_arquivo_nome, novo_arquivo))
+                self.salvar_novos_arquivos(novos_arquivos=novos_arquivos)
         # Se houve erro no lote, para buscar codigo e mensagem de erro
         else:
             if self.versao == u'2.00':

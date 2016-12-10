@@ -2,8 +2,13 @@ PySIGNFe
 ============
 
 Biblioteca de interface com o webservice de Nota Fiscal Eletronica da SEFAZ, oficializada pelo Ministerio da Fazendo do Governo do Brasil.
+
 Desenvolvida em Python 3 no Windows, testada em Python 3 e 2 no GNU/Linux e Windows.
 
+Implementações
+----------
+* Geração do XML, assinatura, emissão e armazenamento de NF-e, NFC-e, NFS-e e CT-e.
+* Impressão de DANFE (Retrato e Paisagem)
 
 Avisos
 ----------

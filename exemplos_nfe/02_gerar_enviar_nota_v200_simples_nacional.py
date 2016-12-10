@@ -37,7 +37,7 @@ if __name__ == '__main__':
     nfe.infNFe.ide.tpEmis.valor     = 1            
     nfe.infNFe.ide.finNFe.valor     = 1            
     nfe.infNFe.ide.procEmi.valor    = 0            
-    nfe.infNFe.ide.verProc.valor    = 'PySPED NF-e'
+    nfe.infNFe.ide.verProc.valor    = 'PySIGNFe'
     nfe.infNFe.ide.mod.valor        = '55'
     nfe.infNFe.ide.cMunFG.valor     = '3106200'
     

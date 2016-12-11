@@ -685,10 +685,12 @@ class nf_e(NotaFiscal):
         vals = {'envio': processo.envio.xml,
                 'resposta': processo.resposta.xml,
                 'proc_xml':processo.resposta.original,
-                'status_resposta': processo.resposta.retNFe.cStat.valor,
-                'status_motivo': processo.resposta.retNFe.xMotivo.valor,
+                #'status_resposta': processo.resposta.retNFe.cStat.valor,
+                #'status_motivo': processo.resposta.retNFe.xMotivo.valor,
                 'reason': processo.resposta.reason}
-
+        for i,ret in enumerate(processo.resposta.retNFe):
+            vals['status_resp_nota_' + str(i)] = ret.cStat.valor
+            vals['status_motivo_nota_' + str(i)] = ret.xMotivo.valor
 
         return vals
 

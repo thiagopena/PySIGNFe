@@ -152,7 +152,7 @@ if __name__ == '__main__':
     lista_cte = []
     lista_cte.append(cte.xml)
     
-    resultados = mycte.processar_lote_cte(lista_cte=lista_cte, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.00', ambiente=2, estado=u'MG', tipo_contingencia=False, salvar_arquivos=True)
+    resultados = mycte.processar_lote_cte(lista_cte=lista_cte, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.00', ambiente=2, estado=u'MG', tipo_contingencia=False, salvar_arquivos=False, consultar_servico=False)
     print("\nResultado:\n")
     '''Retorna um dicionario'''
     for key, value in resultados.items():

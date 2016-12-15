@@ -99,6 +99,7 @@ class ProcessadorNFe(object):
         self.danfe = DANFE()
         self.caminho_temporario = u''
         self.numero_tentativas_consulta_recibo = 2
+        self.verificar_status_servico = True
         self.processos = []
 
         self._servidor     = u''
@@ -917,16 +918,15 @@ class ProcessadorNFe(object):
         #self.caminho = caminho_original
         ambiente = nfe.infNFe.ide.tpAmb.valor
         #self.caminho = self.monta_caminho_nfe(ambiente=nfe.infNFe.ide.tpAmb.valor, chave_nfe=nfe.chave)
+        status_serv = u'107'
+        if self.verificar_status_servico:
+            proc_servico = self.consultar_servico(ambiente=ambiente)
+            yield proc_servico
+            status_serv = proc_servico.resposta.cStat.valor
+            print (' resposta status servico: ', status_serv)
         
-        proc_servico = self.consultar_servico(ambiente=ambiente)
-        yield proc_servico
-
-        #
-        # Serviço em operação?
-        #
-        print (' resposta', proc_servico.resposta.cStat.valor)
-        if proc_servico.resposta.cStat.valor == u'107':
-            print(" Servidor em operacao.")
+        #Servico em operacao (status == 107)
+        if status_serv == u'107':
             #
             # Verificar se as notas já não foram emitadas antes
             #

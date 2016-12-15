@@ -137,7 +137,7 @@ if __name__ == '__main__':
     nfe.gera_nova_chave()
     
     #Gera e emite nota fiscal
-    resultados = nova_nfe.processar_nfe(xml_nfe=nfe.xml, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False)
+    resultados = nova_nfe.processar_nfe(xml_nfe=nfe.xml, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False, consultar_servico=False)
     print("\nResultado:\n")
     '''Retorna um dicionario'''
     for key, value in resultados.items():

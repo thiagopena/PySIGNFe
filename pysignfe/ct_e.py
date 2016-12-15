@@ -41,7 +41,7 @@ class ct_e(NotaFiscal):
                'reason': processo.resposta.reason}
                
     def processar_lote_cte(self, lista_cte, cert, key, versao=u'3.00', ambiente=2, estado=u'MG',
-                           tipo_contingencia=False, salvar_arquivos=True, n_consultas_recibo=2):
+                           tipo_contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
                            
         p = ProcessadorCTe()
         p.ambiente = ambiente
@@ -52,6 +52,7 @@ class ct_e(NotaFiscal):
         p.salvar_arquivos = salvar_arquivos
         p.tipo_contingencia = tipo_contingencia
         p.numero_tentativas_consulta_recibo = n_consultas_recibo
+        p.verificar_status_servico = consultar_servico
         
         lista = []
         if lista_cte:

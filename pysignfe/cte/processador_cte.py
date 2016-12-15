@@ -51,6 +51,7 @@ class ProcessadorCTe(object):
         self.tipo_contingencia = False
         self.caminho_temporario = u''
         self.numero_tentativas_consulta_recibo = 2
+        self.verificar_status_servico = True
         self.processos = []
 
         self._servidor     = u''
@@ -459,16 +460,15 @@ class ProcessadorCTe(object):
         cte = lista_cte[0]
         cte.monta_chave()
         ambiente = cte.infCte.ide.tpAmb.valor
+        status_serv = u'107'
+        if self.verificar_status_servico:
+            proc_servico = self.consultar_servico(ambiente=ambiente)
+            yield proc_servico
+            status_serv = proc_servico.resposta.cStat.valor
+            print (' resposta status servico: ', status_serv)
         
-        proc_servico = self.consultar_servico(ambiente=ambiente)
-        yield proc_servico
-        
-        #
-        # Serviço em operação?
-        #
-        print (' resposta', proc_servico.resposta.cStat.valor)
-        if proc_servico.resposta.cStat.valor == u'107' or 107:
-            print(" Servidor em operacao.")
+        #Servico em operacao (status == 107)
+        if status_serv == u'107' or 107:
             #
             # Verificar se as notas já não foram emitadas antes
             #

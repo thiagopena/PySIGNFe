@@ -63,7 +63,7 @@ class nf_e(NotaFiscal):
 
 
     def processar_nfe(self, xml_nfe, cert, key, versao=u'2.00', ambiente=2, estado=u'MG',
-                      tipo_contingencia=False, salvar_arquivos=True, n_consultas_recibo=2):
+                      tipo_contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
         """
         Este método realiza o processamento de validação, assinatura e transmissão da nfe.
         @param xml_nfe:xml da nfe (string)
@@ -73,6 +73,7 @@ class nf_e(NotaFiscal):
         @param ambiente: ambiente da consulta, pode ser 1 para o ambiente de produção e 2 para homologação,
         @param estado: estado em que realizará o processamento,
         @param tipo_contingencia: habilita a contigência .
+        @param consultar_servico: consulta o status do webservice antes de enviar
         @return: Dicionário com a chave_nfe, protocolo, envio, numero_lote, resposta, status_resposta,status_motivo e reason.
         """
         p = ProcessadorNFe()
@@ -85,6 +86,7 @@ class nf_e(NotaFiscal):
         p.tipo_contingencia = tipo_contingencia
         p.caminho = u''
         p.numero_tentativas_consulta_recibo = n_consultas_recibo
+        p.verificar_status_servico = consultar_servico
         
         if versao == '3.10':
             n = NFe_310()
@@ -129,7 +131,7 @@ class nf_e(NotaFiscal):
 
 
     def processar_lote(self, lista_xml_nfe, cert, key, versao=u'2.00', ambiente=2, estado=u'MG',
-                       tipo_contingencia=False, salvar_arquivos=True, n_consultas_recibo=2):
+                       tipo_contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
         """
         Este método realiza o processamento de validação, assinatura e transmissão da nfe.
         @param lista_xml_nfe:lista nfe(strings)
@@ -139,6 +141,7 @@ class nf_e(NotaFiscal):
         @param ambiente: ambiente da consulta, pode ser 1 para o ambiente de produção e 2 para homologação,
         @param estado: estado em que realizará o processamento,
         @param tipo_contingencia: habilita a contigência .
+        @param consultar_servico: consulta o status do webservice antes de enviar
         @return: Dicionário com o envio,resposta e reason.
         """
         p = ProcessadorNFe()
@@ -151,6 +154,7 @@ class nf_e(NotaFiscal):
         p.salvar_arquivos = salvar_arquivos
         p.caminho = u''
         p.numero_tentativas_consulta_recibo = n_consultas_recibo
+        p.verificar_status_servico = consultar_servico
         '''
         if versao == '3.10':
             n = NFe_310()

@@ -9,6 +9,7 @@ Implementações
 ----------
 * Geração do XML, assinatura, emissão e armazenamento de NF-e, NFC-e, NFS-e e CT-e.
 * Impressão de DANFE (Retrato e Paisagem)
+* Geração de DANFE NFC-e
 
 Avisos
 ----------

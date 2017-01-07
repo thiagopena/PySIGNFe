@@ -2,13 +2,9 @@
 
 from pysignfe.corr_unicode import *
 import os
-import locale
-import hashlib
-
 from pysignfe.xml_sped import *
 from pysignfe.nfe.manual_401 import nfe_200
 from pysignfe.nfe.manual_500 import ESQUEMA_ATUAL
-from pysignfe.nfe.webservices_3 import CONSULTA_CHAVE_NFCE, CONSULTA_QRCODE_NFCE
 
 DIRNAME = os.path.dirname(__file__)
 
@@ -546,7 +542,7 @@ class exportInd(XMLNFe):
 class detExport(XMLNFe):
     def __init__(self):
         super(detExport, self).__init__()
-        self.nDraw      = TagDecimal(nome=u'nDraw'  , codigo=u'I51', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'//detExport')
+        self.nDraw = TagDecimal(nome=u'nDraw'  , codigo=u'I51', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'//detExport')
         self.exportInd  = exportInd()
 
     def get_xml(self):
@@ -569,12 +565,12 @@ class detExport(XMLNFe):
 class Prod(nfe_200.Prod):
     def __init__(self):
         super(Prod, self).__init__()
-        self.NCM      = TagCaracter(nome=u'NCM'     , codigo=u'I05' , tamanho=[2,  8]                        , raiz=u'//det/prod')
-        self.NVE      = TagCaracter(nome=u'NVE'     , codigo=u'I05a', tamanho=[2,  8]                        , raiz=u'//det/prod',obrigatorio=False)
-        self.qCom     = TagDecimal(nome=u'qCom'     , codigo=u'I10' , tamanho=[1, 15, 1], decimais=[0,  4]  , raiz=u'//det/prod')
-        self.vUnCom   = TagDecimal(nome=u'vUnCom'   , codigo=u'I10a', tamanho=[1, 21, 1], decimais=[0, 10]  , raiz=u'//det/prod')
-        self.qTrib    = TagDecimal(nome=u'qTrib'    , codigo=u'I14' , tamanho=[1, 15, 1], decimais=[0,  4], raiz=u'//det/prod')
-        self.vUnTrib  = TagDecimal(nome=u'vUnTrib'  , codigo=u'I14a', tamanho=[1, 21, 1], decimais=[0, 10], raiz=u'//det/prod')
+        self.NCM      = TagCaracter(nome=u'NCM'     , codigo=u'I05' , tamanho=[2,  8]                        , raiz=u'//det/prod'),
+        self.NVE      = TagCaracter(nome=u'NVE'     , codigo=u'I05a' , tamanho=[2,  8]                        , raiz=u'//det/prod',obrigatorio=False),
+        self.qCom     = TagDecimal(nome=u'qCom'     , codigo=u'I10' , tamanho=[1, 15, 1], decimais=[0,  4, 4], raiz=u'//det/prod')
+        self.vUnCom   = TagDecimal(nome=u'vUnCom'   , codigo=u'I10a', tamanho=[1, 21, 1], decimais=[0, 10, 4], raiz=u'//det/prod')
+        self.qTrib    = TagDecimal(nome=u'qTrib'    , codigo=u'I14' , tamanho=[1, 15, 1], decimais=[0,  4, 4], raiz=u'//det/prod')
+        self.vUnTrib  = TagDecimal(nome=u'vUnTrib'  , codigo=u'I14a', tamanho=[1, 21, 1], decimais=[0, 10, 4], raiz=u'//det/prod')
         self.vOutro   = TagDecimal(nome=u'vOutro'   , codigo=u'I17a', tamanho=[1, 15, 1], decimais=[0,  2, 2], raiz=u'//det/prod', obrigatorio=False)
         self.indTot   = TagInteiro(nome=u'indTot'   , codigo=u'I17b', tamanho=[1,  1, 1],                      raiz=u'//det/prod', valor=1)
         self.xPed     = TagCaracter(nome=u'xPed'    , codigo=u'I30' , tamanho=[1, 15],                         raiz=u'//det/prod', obrigatorio=False)
@@ -675,7 +671,6 @@ class Prod(nfe_200.Prod):
 class Det(nfe_200.Det):
     def __init__(self):
         super(Det, self).__init__()
-        self.prod       = Prod()
 
 
 class Compra(nfe_200.Compra):
@@ -753,25 +748,12 @@ class Pag(XMLNFe):
      # Formas de pagamento NFC-e.
     def __init__(self):
         super(Pag, self).__init__()
-        self.tPag = TagCaracter(nome=u'tPag', codigo=u'YA02', tamanho=[2,2,2], raiz=u'//pag')
-        self.vPag = TagDecimal(nome=u'vPag'  , codigo=u'YA03', tamanho=[1, 13, 1], decimais=[0, 2, 2], raiz=u'//pag')
+        self.tPag = TagCaracter(nome=u'tPag', codigo=u'YA02', tamanho=[2,2,2], raiz=u'//ide/pag')
+        self.vPag = TagDecimal(nome=u'vPag'  , codigo=u'YA03', tamanho=[1, 13, 1], decimais=[0, 2, 2], raiz=u'//ide/pag')
         self.card = Card()
-        
-        self.formas_pagamento = {
-            '01' : 'Dinheiro',
-            '02' : 'Cheque',
-            '03' : 'Cartão de Crédito',
-            '04' : 'Cartão de Débito',
-            '05' : 'Crédito da Loja',
-            '10' : 'Vale Alimentação',
-            '11' : 'Vale Refeição',
-            '12' : 'Vale Presente',
-            '13' : 'Vale Combustível',
-            '99' : 'Outros',
-        }
 
     def get_xml(self):
-        if not (self.tPag.valor or self.vPag.valor or self.card.xml):
+        if not (self.tPAg.valor or self.vPag.valor or self.card.xml):
             return ''
             
         xml = XMLNFe.get_xml(self)
@@ -790,13 +772,6 @@ class Pag(XMLNFe):
 
 
     xml = property(get_xml, set_xml)
-    
-    def forma_pagamento_danfe(self):
-        return self.formas_pagamento[self.tPag.valor]
-    
-    def valor_pagamento_danfe(self):
-        return locale.format(u'%.2f', self.vPag.valor, 1)
-                
 
 
 class Lacres(nfe_200.Lacres):
@@ -1307,40 +1282,11 @@ class InfNFe(nfe_200.InfNFe):
             self.cana.xml     = arquivo
 
     xml = property(get_xml, set_xml)
-    
-
-#Informacao suplementar, apenas para NFC-e
-class InfNFeSupl(XMLNFe):
-    def __init__(self):
-        super(InfNFeSupl, self).__init__()
-        self.qrCode  = TagCaracter(nome=u'qrCode', codigo=u'ZX02', tamanho=[100, 600], raiz=u'//NFe/infNFeSupl')
-
-    def get_xml(self):
-        if not self.qrCode.valor:
-            return ''
-        xml = XMLNFe.get_xml(self)
-        xml += u'<infNFeSupl><![CDATA['
-        xml += self.qrCode.xml
-        xml += u']]></infNFeSupl>'
-        return xml
-
-    def set_xml(self, arquivo):
-        if self._le_xml(arquivo):
-            self.qrCode.xml     = arquivo
-
-    xml = property(get_xml, set_xml)
-    
-    
 
 class NFe(nfe_200.NFe):
     def __init__(self):
         super(NFe, self).__init__()
         self.infNFe = InfNFe()
-        ##NFC-e
-        self.infNFeSupl = InfNFeSupl()
-        
-        self.via_estabelecimento = False
-        
         self.Signature = Signature()
         self.caminho_esquema = os.path.join(DIRNAME, u'schema/', ESQUEMA_ATUAL + u'/')
         self.arquivo_esquema = u'nfe_v3.10.xsd'
@@ -1462,105 +1408,3 @@ class NFe(nfe_200.NFe):
         digito = self._calcula_dv(dados)
         dados += unicode(digito)
         self.dados_contingencia_fsda = dados
-        
-    def soma_pagamentos(self):
-        total_pago = 0
-        for p in self.infNFe.pag:
-            total_pago += p.vPag.valor
-        #return locale.format(u'%.2f', total_pago, 1)
-        return total_pago
-        
-    def troco_danfe(self):
-        valor_pagar = self.valor_a_pagar()
-        valor_pago  = self.soma_pagamentos()
-        troco = valor_pago - valor_pagar
-        if troco < 0:
-            troco = 0
-        return locale.format(u'%.2f', troco, 1)
-    
-    def endereco_consulta_chave_nfce(self):
-        url_consulta = CONSULTA_CHAVE_NFCE[self.infNFe.emit.enderEmit.UF.valor]
-        if url_consulta == '':
-            raise ValueError('UF não habilitado para NFC-e')
-        return url_consulta
-        
-    def gera_qrcode_nfce(self, csc, cidtoken='000001', nversao='100'):
-        
-        url_consulta_qrcode = CONSULTA_QRCODE_NFCE[self.infNFe.emit.enderEmit.UF.valor]
-        if url_consulta_qrcode == '':
-            raise ValueError('UF não habilitado para NFC-e')
-        
-        ##Montando parametros:
-        params_qrcode = u'chNFe=' + unicode(self.chave) + u'&'
-        params_qrcode += u'nVersao=' + unicode(nversao) + u'&'
-        params_qrcode += u'tpAmp=' + unicode(self.infNFe.ide.tpAmb.valor) + u'&'
-        if (self.infNFe.dest.CPF.valor or self.infNFe.dest.CNPJ.valor or self.infNFe.dest.idEstrangeiro.valor):
-            params_qrcode += u'cDest=' + unicode(self.infNFe.dest.CPF.valor or self.infNFe.dest.CNPJ.valor or self.infNFe.dest.idEstrangeiro.valor) + u'&'
-        
-        ##Converter dhEmi e o digest para Hex:
-        dhemi_hex = "".join("{:02x}".format(ord(c)) for c in self.infNFe.ide.dhEmi.valor.isoformat())
-        digval_hex = "".join("{:02x}".format(ord(c)) for c in self.Signature.DigestValue)
-        
-        params_qrcode += u'dhEmi=' + unicode(dhemi_hex) + u'&'
-        params_qrcode += u'vNF=' + unicode(self.infNFe.total.ICMSTot.vNF.valor) + u'&'
-        params_qrcode += u'vICMS=' + unicode(self.infNFe.total.ICMSTot.vICMS.valor) + u'&'
-        params_qrcode += u'digVal=' + unicode(digval_hex) + u'&'
-        params_qrcode += u'cIdToken=' + unicode(cidtoken.zfill(6)) + u'&'
-        
-        ##Calcular cHashQRCode
-        hash_string = params_qrcode + csc
-        hash_object = hashlib.sha1(hash_string.encode('utf-8'))
-        chash_qrcode = hash_object.hexdigest()
-        
-        params_qrcode += u'cHashQRCode=' + unicode(chash_qrcode)
-        
-        params_qrcode = url_consulta_qrcode + params_qrcode
-                
-        self.infNFeSupl.qrCode.valor = params_qrcode
-        
-    def id_consumidor(self):
-        idcons = ''
-        if self.infNFe.dest.CPF.valor:
-            idcons += u'CONSUMIDOR - CPF: ' + unicode(self.infNFe.dest.CPF.valor)
-        elif self.infNFe.dest.CNPJ.valor:
-            idcons += u'CONSUMIDOR - CNPJ: ' + unicode(self.infNFe.dest.CNPJ.valor)
-        elif self.infNFe.dest.idEstrangeiro.valor:
-            idcons += u'CONSUMIDOR - Id. Estrangeiro: ' + unicode(self.infNFe.dest.idEstrangeiro.valor)
-            
-        return idcons
-        
-    def ender_consumidor(self):
-        ender = self.infNFe.dest.enderDest.xLgr.valor
-        ender += u', ' + self.infNFe.dest.enderDest.nro.valor
-        ender += u', ' + self.infNFe.dest.enderDest.xMun.valor
-        ender += u' - ' + self.infNFe.dest.enderDest.UF.valor
-        return ender
-    
-    def id_nfce(self):
-        id_nota = u' ' + self.numero_formatado()
-        id_nota += u' ' + self.serie_formatada()
-        #id_nota += u' ' + self.infNFe.ide.dhEmi.formato_danfe()
-        #id_nota += u' Data de emissão: ' + self.infNFe.ide.dhEmi.formato_danfe_nfce()
-        #if not self.via_estabelecimento:
-        #    id_nota += u' - Via do Consumidor'
-        #else:
-        #    id_nota += u' - Via do Estabelecimento'
-        return id_nota
-    
-    def data_emissao_danfe_nfce(self):
-        data_emissao = u' Data emissão: ' + self.infNFe.ide.dhEmi.formato_danfe_nfce()
-        if not self.via_estabelecimento:
-            data_emissao += u' - Via do Consumidor'
-        else:
-            data_emissao += u' - Via do Estabelecimento'
-        return data_emissao
-        
-    def tributos_totais_nfce(self):
-        t_tot = u'Tributos Totais Incidentes (Lei Federal 12.741/2012): '
-        v_tot = self.infNFe.total.ICMSTot.vTotTrib.valor
-        t_tot += u'R$' + locale.format(u'%.2f', v_tot, 1)
-        return t_tot
-        
-        
-        
-        

@@ -32,6 +32,7 @@ import os
 import unicodedata
 import re
 import pytz
+from time import strftime
 
 NAMESPACE_NFE  = u'http://www.portalfiscal.inf.br/nfe'
 NAMESPACE_SIG  = u'http://www.w3.org/2000/09/xmldsig#'
@@ -537,6 +538,7 @@ class TagDataHoraUTC(TagData):
         self._validacao = re.compile(r'(((20(([02468][048])|([13579][26]))-02-29))|(20[0-9][0-9])-((((0[1-9])|(1[0-2]))-((0[1-9])|(1\d)|(2[0-8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))-(29|30)))))T(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d(-0[1-4]:00)?')
         self._valida_fuso = re.compile(r'.*-0[1-4]:00$')
         self._brasilia = pytz.timezone('America/Sao_Paulo')
+        self.tzsistema = fuso_horario_sistema()
         self.fuso_horario = 'America/Sao_Paulo'
 
     def set_valor(self, novo_valor):
@@ -559,6 +561,12 @@ class TagDataHoraUTC(TagData):
                 novo_valor = None
 
         if isinstance(novo_valor, datetime) and self._valida(novo_valor):
+        
+            if not novo_valor.tzinfo:
+                novo_valor = fuso_horario_sistema().localize(novo_valor)
+                novo_valor = pytz.UTC.normalize(novo_valor)
+                novo_valor = self._brasilia.normalize(novo_valor)
+                
             self._valor_data = novo_valor
             self._valor_data = self._valor_data.replace(microsecond=0)
             try:
@@ -622,6 +630,14 @@ class TagDataHoraUTC(TagData):
             valor = valor.replace('BRT', 'HOB')
             valor = valor.replace('BRST', 'HVOB')
             return valor
+            
+    def formato_danfe_nfce(self):
+        ##Converter UTC para horario local
+        if self._valor_data is None:
+            return ''
+        localdt = self._valor_data.replace(tzinfo=pytz.utc).astimezone(self.tzsistema)
+        localdt_str = self.tzsistema.normalize(localdt).strftime('%d/%m/%Y %H:%M:%S')
+        return localdt_str
 
 
 class TagInteiro(TagCaracter):
@@ -780,7 +796,7 @@ class TagDecimal(TagCaracter):
     def formato_danfe(self):
         if not (self.obrigatorio or self._valor_decimal):
             return u''
-
+        
         # Tamanho mínimo das casas decimais
         if (len(self.decimais) >= 3) and self.decimais[2]:
             if len(self._parte_decimal()) <= self.decimais[2]:
@@ -789,6 +805,22 @@ class TagDecimal(TagCaracter):
                 formato = u'%.' + unicode(len(self._parte_decimal())) + u'f'
         else:
             formato = u'%.2f'
+
+        return locale.format(formato, self._valor_decimal, grouping=True)
+        
+    def formato_danfe_nfce(self):
+        if not (self.obrigatorio or self._valor_decimal):
+            return u''
+        
+        # Tamanho mínimo das casas decimais
+        if (len(self.decimais) >= 3) and self.decimais[2]:
+            if len(self._parte_decimal()) <= self.decimais[2]:
+                formato = u'%.' + unicode(self.decimais[2]) + u'f'
+            else:
+                formato = u'%.' + unicode(len(self._parte_decimal())) + u'f'
+        else:
+            formato = u'%.' + unicode(len(self._parte_decimal())) + u'f'
+            #formato = u'%.2f'
 
         return locale.format(formato, self._valor_decimal, grouping=True)
 
@@ -957,4 +989,16 @@ def somente_ascii(funcao):
         return unicodedata.normalize(b'NFKD', funcao(*args, **kwargs)).encode('ascii', 'ignore')
 
     return converter_para_ascii_puro
+    
+    
+def fuso_horario_sistema():
+    diferenca = int(strftime('%z')) // 100
+
+    if diferenca < 0:
+        return pytz.timezone('Etc/GMT+' + str(diferenca * -1))
+
+    if diferenca > 0:
+        return pytz.timezone('Etc/GMT-' + str(diferenca))
+
+    return pytz.UTC
 

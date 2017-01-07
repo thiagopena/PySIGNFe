@@ -387,6 +387,41 @@ class nf_e(NotaFiscal):
         danfe_pdf.close()
 
         return d.danfe
+    
+    def gerar_danfe_consumidor(self, nfce, csc, imprime_produtos=True, imprime_id_consumidor=True, imprime_ender_consumidor=True, via_estabelecimento=False, cidtoken='000001', nversao='100', versao='2.00'):
+                    
+        d = DANFE()
+        if versao == '3.10':
+            nota = NFe_310()
+            protNFe = ProtNFe_310()
+            proc = ProcNFe_310()
+        else:
+            nota = NFe_200()
+            protNFe = ProtNFe_200()
+            proc = ProcNFe_200()
+        nota.xml = nfce
+        resp = minidom.parseString(nfce.encode('utf-8'))
+        resp = resp.getElementsByTagName("protNFe")[0]
+        resposta = resp.toxml()
+        protNFe.xml = resposta
+        proc.protNFe = protNFe
+        
+        d.NFe = nota
+        d.protNFe = protNFe
+        d.versao = versao
+        d.salvar_arquivo = False
+        d.imprime_produtos_nfce = imprime_produtos
+        d.imprime_id_consumidor = imprime_id_consumidor
+        d.imprime_ender_consumidor = imprime_ender_consumidor
+        d.obs_impressao = u'DANFE gerado em %(now:%d/%m/%Y, %H:%M:%S)s'
+        d.gerar_danfe_consumidor(csc=csc, via_estabelecimento=via_estabelecimento, cidtoken=cidtoken, nversao=nversao)
+        danfe_pdf = io.BytesIO()
+        d.danfe.generate_by(PDFGenerator, filename=danfe_pdf)
+        d.danfe = danfe_pdf.getvalue()
+        danfe_pdf.close()
+
+        return d.danfe
+        
 
     def validar_chave_nfe(self, chave, uf, data_emissao, cnpj, modelo, serie, numero_nf):
         """

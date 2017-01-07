@@ -6,6 +6,8 @@ from pysignfe.xml_sped import *
 from pysignfe.nfe.manual_300 import ESQUEMA_ATUAL
 import os
 import random
+import locale
+
 
 DIRNAME = os.path.dirname(__file__)
 
@@ -1543,6 +1545,7 @@ class Det(XMLNFe):
         formatado = unicode(self.imposto.ICMS.orig.valor).zfill(1)
         formatado += unicode(self.imposto.ICMS.CST.valor).zfill(2)
         return formatado
+        
 
 class Compra(XMLNFe):
     def __init__(self):
@@ -3131,6 +3134,21 @@ class NFe(XMLNFe):
         formatado += self.infNFe.emit.xNome.valor.upper()
         formatado += u'</b> OS PRODUTOS E/OU SERVIÇOS CONSTANTES DA <b>NOTA FISCAL ELETRÔNICA</b> INDICADA AO LADO'
         return formatado
+        
+    def cnpj_com_label_formatado(self):
+        formatado = u'CNPJ: '
+        formatado += self.cnpj_emitente_formatado()
+        return formatado
+        
+    def razao_social_formatado(self):
+        return self.infNFe.emit.xNome.valor.upper()
+    
+    def endereco_emitente_nfce_formatado(self):
+        formatado = self.infNFe.emit.enderEmit.xLgr.valor
+        formatado += u', ' + self.infNFe.emit.enderEmit.nro.valor
+        formatado += u', ' + self.infNFe.emit.enderEmit.xMun.valor
+        formatado += u', ' + self.infNFe.emit.enderEmit.UF.valor
+        return formatado
 
     def frete_formatado(self):
         if self.infNFe.transp.modFrete.valor == 0:
@@ -3152,3 +3170,40 @@ class NFe(XMLNFe):
             formatado = u''
 
         return formatado
+
+    def quantidade_itens(self):
+        qtd = 0
+        for d in self.infNFe.det:
+            qtd += d.prod.qCom.valor
+        
+        return locale.format('%d', qtd, 1)
+    
+    def valor_total_nota(self):
+        v_prods = self.infNFe.total.ICMSTot.vProd.valor
+        v_servs = self.infNFe.total.ISSQNTot.vServ.valor
+        total = v_prods + v_servs
+        return locale.format(u'%.2f', total, 1)
+    
+    def total_acrescimos(self):
+        v_frete = self.infNFe.total.ICMSTot.vFrete.valor
+        v_seg   = self.infNFe.total.ICMSTot.vSeg.valor
+        v_outro = self.infNFe.total.ICMSTot.vOutro.valor
+        total_acrescimo = v_frete + v_seg + v_outro
+        return locale.format(u'%.2f', total_acrescimo, 1)
+     
+    def total_desconto(self):
+        v_desc = self.infNFe.total.ICMSTot.vDesc.valor
+        return locale.format(u'%.2f', v_desc, 1)
+        
+    def valor_a_pagar(self):
+        v_prods = self.infNFe.total.ICMSTot.vProd.valor
+        v_servs = self.infNFe.total.ISSQNTot.vServ.valor
+        v_frete = self.infNFe.total.ICMSTot.vFrete.valor
+        v_seg   = self.infNFe.total.ICMSTot.vSeg.valor
+        v_outro = self.infNFe.total.ICMSTot.vOutro.valor
+        v_desc  = self.infNFe.total.ICMSTot.vDesc.valor
+        total_a_pagar = v_prods + v_servs + v_frete + v_seg + v_outro - v_desc
+        return total_a_pagar
+        
+    def valor_a_pagar_formatado(self):
+        return locale.format(u'%.2f', self.valor_a_pagar(), 1)

@@ -62,6 +62,7 @@ from .manifestacao_destinatario import MD_DESCEVENTO
 #
 from .danfe.danferetrato import *
 from .danfe.danfepaisagem import *
+from .danfe.danfe_consumidor import *
 
 from io import StringIO
 import pytz
@@ -1161,6 +1162,11 @@ class DANFE(object):
         self.imprime_fatura         = True
         self.imprime_duplicatas     = True
         self.imprime_issqn          = True
+        
+        #NFC-e
+        self.imprime_produtos_nfce = True
+        self.imprime_id_consumidor = True
+        self.imprime_ender_consumidor = True
 
         self.caminho           = u''
         self.salvar_arquivo    = False
@@ -1329,5 +1335,110 @@ class DANFE(object):
         if self.salvar_arquivo:
             nome_arq = self.caminho + self.NFe.chave + u'.pdf'
             type(self.danfe.generate_by(PDFGenerator, filename=nome_arq))
+            
+    def gerar_danfe_consumidor(self, csc, via_estabelecimento=False, cidtoken='000001', nversao='100'):
+        if self.NFe is None:
+            raise ValueError(u'Não é possível gerar um DANFE sem a informação de uma NF-e')
+            
+        if self.protNFe is None:
+            if self.versao == u'2.00':
+                self.protNFe = ProtNFe_200()
+            elif self.versao == u'3.10':
+                self.protNFe = ProtNFe_310()
 
+        if self.retCancNFe is None:
+            if self.versao == u'2.00':
+                self.retCancNFe = RetCancNFe_200()
+            elif self.versao == u'3.10':
+                self.retCancNFe = RetCancNFe_310()
 
+        #
+        # Prepara o queryset para impressão
+        #
+        self.NFe.monta_chave()
+        #CSC 36 caracteres
+        self.NFe.gera_qrcode_nfce(csc=csc, cidtoken=cidtoken, nversao=nversao)
+        self.NFe.monta_dados_contingencia_fsda()
+        self.NFe.site = self.site
+        self.NFe.via_estabelecimento = via_estabelecimento
+
+        for detalhe in self.NFe.infNFe.det:
+            detalhe.NFe = self.NFe
+            detalhe.protNFe = self.protNFe
+            detalhe.retCancNFe = self.retCancNFe
+        
+        self.danfe = DANFENFCe()
+        self.danfe.queryset = self.NFe.infNFe.det
+                
+        self.danfe.band_page_header = self.danfe.cabecalho
+        
+        if self.NFe.infNFe.ide.tpEmis.valor != 1:
+            self.danfe.mensagem_fiscal_topo.campo_variavel_contingencia()
+        elif self.NFe.infNFe.ide.tpAmb.valor == 2:
+            self.danfe.mensagem_fiscal_topo.campo_variavel_homologacao()
+            
+        self.danfe.band_page_header.child_bands.append(self.danfe.mensagem_fiscal_topo)
+        
+        if self.imprime_produtos_nfce:
+            self.danfe.det_produtos.elements.append(self.danfe.inf_produtos)
+            self.danfe.band_page_header.child_bands.append(self.danfe.det_produtos)
+        
+        ##Adicionar acrescimos se houver
+        if (str(self.NFe.infNFe.total.ICMSTot.vFrete.valor) != '0.0') or \
+            (str(self.NFe.infNFe.total.ICMSTot.vSeg.valor) != '0.0') or \
+            (str(self.NFe.infNFe.total.ICMSTot.vOutro.valor) != '0.0'):
+            
+                self.danfe.descontos.band_header.set_top()
+                for band in self.danfe.acrescimos.band_header.elements:
+                    self.danfe.inf_totais.band_header.elements.append(band)
+                
+                #Adicionar a altura do band_header
+                self.danfe.inf_totais.band_header.add_height()
+        
+        ##Adicionar descontos se houver
+        if (str(self.NFe.infNFe.total.ICMSTot.vDesc.valor) != '0.0'):
+            for band in self.danfe.descontos.band_header.elements:
+                self.danfe.inf_totais.band_header.elements.append(band)
+                
+            #Adicionar a altura do band_header
+            self.danfe.inf_totais.band_header.add_height()
+        
+        self.danfe.det_totais.elements.append(self.danfe.inf_totais)
+        self.danfe.band_page_header.child_bands.append(self.danfe.det_totais)
+        
+        self.danfe.det_pagamento.elements.append(self.danfe.inf_pagamento)
+        self.danfe.band_page_header.child_bands.append(self.danfe.det_pagamento)
+        
+        self.danfe.band_page_header.child_bands.append(self.danfe.consulta_chave)
+        
+        if self.imprime_id_consumidor:
+            self.danfe.id_consumidor.consumidor_identificado()
+            self.danfe.band_page_header.child_bands.append(self.danfe.id_consumidor)
+            
+            if self.imprime_ender_consumidor:
+                self.danfe.band_page_header.child_bands.append(self.danfe.ender_consumidor)
+        else:
+            self.danfe.id_consumidor.consumidor_nao_identificado()
+            self.danfe.band_page_header.child_bands.append(self.danfe.id_consumidor)
+                    
+        ##Emissão normal, imprimir numero protocolo
+        if self.NFe.infNFe.ide.tpEmis.valor == 1:
+            self.danfe.id_nfce.campo_variavel_protocolo()
+        
+        self.danfe.band_page_header.child_bands.append(self.danfe.id_nfce)
+        
+        if self.NFe.infNFe.ide.tpEmis.valor != 1:
+            self.danfe.mensagem_fiscal_base.campo_variavel_contingencia()
+        elif self.NFe.infNFe.ide.tpAmb.valor == 2:
+            self.danfe.mensagem_fiscal_base.campo_variavel_homologacao()
+        
+        self.danfe.band_page_header.child_bands.append(self.danfe.mensagem_fiscal_base)
+        
+        self.danfe.qrcode_danfe.gera_img_qrcode()
+        self.danfe.band_page_header.child_bands.append(self.danfe.qrcode_danfe)
+        
+        if self.NFe.infNFe.total.ICMSTot.vTotTrib.valor:
+            self.danfe.band_page_header.child_bands.append(self.danfe.tributos_totais)
+        
+        ##Ajustar o tamanho da pagina
+        self.danfe.set_report_height(n_produtos=len(self.NFe.infNFe.det), n_pag=len(self.NFe.infNFe.pag))

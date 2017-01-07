@@ -34,6 +34,8 @@ FONTES_ADICIONAIS = {
         (u'Gentium Book Basic Bold'       , DIRNAME + u'/fonts/genbkbasb.ttf' , True , False),
         (u'Gentium Book Basic Italic'     , DIRNAME + u'/fonts/genbkbasi.ttf' , False, True),
         (u'Gentium Book Basic Bold Italic', DIRNAME + u'/fonts/genbkbasbi.ttf', True , True),
+        (u'Courier New'                   , DIRNAME + u'/fonts/cour.ttf', True , True),
+        (u'Courier New Bold'              , DIRNAME + u'/fonts/courbd.ttf', True , True),
     )
 }
 
@@ -44,6 +46,9 @@ FONTE_NORMAL = 'Gentium Book Basic'
 FONTE_NEGRITO = FONTE_NORMAL + ' Bold'
 FONTE_ITALICO = FONTE_NORMAL + ' Italic'
 FONTE_NEGRITO_ITALICO = FONTE_NORMAL + ' Bold Italic'
+
+FONTE_NFCE = 'Courier New'
+FONTE_NFCE_NEGRITO = FONTE_NFCE + ' Bold'
 
 FONTE_TAMANHO_5 = 5
 FONTE_TAMANHO_6 = FONTE_TAMANHO_5 + 1

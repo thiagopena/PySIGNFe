@@ -1,6 +1,7 @@
 __pycache__/
 ArquivosXML/
 *.bak
+*.pfx
 *DS_Store
 *.pyc
 /.project

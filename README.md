@@ -28,7 +28,8 @@ Dependências
 * cryptography
 * reportlab
 * six
-* geraldo
+* [geraldo](https://github.com/thiagopena/geraldo)
+    * Utilizar o fork do geraldo para gerar DANFE.
 
 Instalação:
 -----------

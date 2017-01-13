@@ -19,5 +19,6 @@ class RetConsStatServ(consstatserv_200.RetConsStatServ):
     def __init__(self):
         super(RetConsStatServ, self).__init__()
         self.versao    = TagDecimal(nome=u'retConsStatServ', codigo=u'FR01', propriedade=u'versao', namespace=NAMESPACE_NFE, valor=u'3.10', raiz=u'/')
+        self.dhRecbto  = TagDataHoraUTC(nome=u'dhRecbto' , codigo=u'FR10', raiz=u'//retConsStatServ')
         self.caminho_esquema = os.path.join(DIRNAME, u'schema', ESQUEMA_ATUAL + u'/')
         self.arquivo_esquema = u'retConsStatServ_v3.10.xsd'

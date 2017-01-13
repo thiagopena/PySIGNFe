@@ -51,7 +51,8 @@ UF_CODIGO = {
     u'SC': 42,
     u'SE': 28,
     u'SP': 35,
-    u'TO': 17
+    u'TO': 17,
+    u'NACIONAL': 91,
 }
 
 CODIGO_UF = {
@@ -81,6 +82,7 @@ CODIGO_UF = {
     42: u'SC',
     28: u'SE',
     35: u'SP',
-    17: u'TO'
+    17: u'TO',
+    91: u'NACIONAL',
 }
 

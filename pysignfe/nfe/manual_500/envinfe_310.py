@@ -10,12 +10,11 @@ DIRNAME = os.path.dirname(__file__)
 class EnviNFe(envinfe_200.EnviNFe):
     def __init__(self):
         super(EnviNFe, self).__init__()
-
         self.versao  = TagDecimal(nome=u'enviNFe', codigo=u'AP02', propriedade=u'versao', namespace=NAMESPACE_NFE, valor=u'3.10', raiz=u'/')
-        self.caminho_esquema = os.path.join(DIRNAME, u'schema/', ESQUEMA_ATUAL + u'/')
         self.indSinc  = TagInteiro(nome=u'indSinc' , codigo=u'AP03a', tamanho=[1, 1, 1], raiz=u'//enviNFe',valor=0)
-
+        self.caminho_esquema = os.path.join(DIRNAME, u'schema/', ESQUEMA_ATUAL + u'/')
         self.arquivo_esquema = u'enviNFe_v3.10.xsd'
+        
     def get_xml(self):
         xml = XMLNFe.get_xml(self)
         xml += ABERTURA
@@ -49,7 +48,7 @@ class RetEnviNFe(envinfe_200.RetEnviNFe):
     def __init__(self):
         super(RetEnviNFe, self).__init__()
         self.versao   = TagDecimal(nome=u'retEnviNFe', codigo=u'AR02' , propriedade=u'versao', namespace=NAMESPACE_NFE, valor=u'3.10', raiz=u'/')
-        self.dhRecbto = TagDataHoraUTC(nome=u'dhRecbto' , codigo=u'AR06b'                        , raiz=u'//retEnviNFe')
+        self.dhRecbto = TagDataHoraUTC(nome=u'dhRecbto' , codigo=u'AR06b', raiz=u'//retEnviNFe')
         self.infRec   = InfRec()
         self.caminho_esquema = os.path.join(DIRNAME, u'schema/', ESQUEMA_ATUAL + u'/')
         self.arquivo_esquema = u'retEnviNFe_v3.10.xsd'

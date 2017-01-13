@@ -12,7 +12,7 @@ class ConsNFeDest(XMLNFe):
         self.versao    = TagDecimal(nome=u'consNFeDest', codigo=u'IP01', propriedade=u'versao', namespace=NAMESPACE_NFE, valor=u'1.01', raiz=u'/')
         self.tpAmb = TagInteiro(nome=u'tpAmb'   , codigo=u'IP03', tamanho=[ 1,  1, 1] , raiz=u'//consNFeDest')
         self.xServ =  TagCaracter(nome=u'xServ', codigo=u'IP04' , tamanho=[18, 18]     , raiz=u'//consNFeDest', valor=u'CONSULTAR NFE DEST')
-        self.CNPJ = TagCaracter(nome=u'CNPJ'   , codigo=u'IP05' , tamanho=[ 0, 14]   , raiz=u'//consNFeDest')
+        self.CNPJ = TagCaracter(nome=u'CNPJ'   , codigo=u'IP05' , tamanho=[ 14, 14]   , raiz=u'//consNFeDest')
         self.indNFe = TagInteiro(nome=u'indNFe', codigo=u'IP06' , tamanho=[1, 1, 1]     , raiz=u'//consNFeDest')
         self.indEmi = TagInteiro(nome=u'indEmi', codigo=u'IP07' , tamanho=[1, 1, 1]     , raiz=u'//consNFeDest')
         self.ultNSU = TagCaracter(nome=u'ultNSU', codigo=u'IP08' , tamanho=[1, 15]     , raiz=u'//consNFeDest')
@@ -60,7 +60,7 @@ class ResCCe(XMLNFe):
         self.descEvento = TagCaracter(nome=u'descEvento'   , codigo=u'IR45' , tamanho=[ 5, 60]   , raiz=u'//ret/resCCe',obrigatorio=False)
         self.xCorrecao = TagCaracter(nome=u'descEvento'   , codigo=u'IR46' , tamanho=[ 15, 1000]   , raiz=u'//ret/resCCe', obrigatorio=False)
         self.tpNF = TagInteiro(nome=u'tpNF', codigo=u'IR47' , tamanho=[1, 1, 1]     , raiz=u'//ret/resCCe',obrigatorio=False)
-        self.dhRecbto = TagCaracter(nome=u'dhRecbto', codigo=u'IR48' ,  tamanho=[ 0, 30],raiz=u'//ret/resCCe',obrigatorio=False)
+        self.dhRecbto = TagDataHoraUTC(nome=u'dhRecbto', codigo=u'IR48' ,  raiz=u'//ret/resCCe',obrigatorio=False)
 
     def get_xml(self):
         xml = XMLNFe.get_xml(self)
@@ -109,7 +109,7 @@ class ResCanc(XMLNFe):
         self.tpNF = TagInteiro(nome=u'tpNF', codigo=u'IR33' , tamanho=[1, 1, 1]     , raiz=u'//ret/resCanc',obrigatorio=False)
         self.vNF     = TagDecimal(nome=u'vNF'    , codigo=u'IR34', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'//ret/resCanc',obrigatorio=False)
         self.digVal    = TagCaracter(nome=u'digVal'  , codigo=u'IR35', tamanho=[28, 28]   , raiz=u'//ret/resCanc',obrigatorio=False)
-        self.dhRecbto = TagCaracter(nome=u'dhRecbto', codigo=u'IR36' ,  tamanho=[ 0, 30],raiz=u'//ret/resCanc',obrigatorio=False)
+        self.dhRecbto = TagDataHoraUTC(nome=u'dhRecbto', codigo=u'IR36' ,  raiz=u'//ret/resCanc',obrigatorio=False)
         self.cSitNFe = TagInteiro(nome=u'cSitNFe', codigo=u'IR37' , tamanho=[1, 1, 1]     , raiz=u'//ret/resCanc',obrigatorio=False)
         self.cSitConf = TagInteiro(nome=u'cSitConf', codigo=u'IR38' , tamanho=[1, 1, 1]     , raiz=u'//ret/resCanc',obrigatorio=False)
 
@@ -153,6 +153,7 @@ class ResCanc(XMLNFe):
             self.cSitNFe.xml = arquivo
             self.cSitConf.xml = arquivo
     xml = property(get_xml, set_xml)
+    
 
 class ResNFe(XMLNFe):
     def __init__(self):
@@ -167,7 +168,7 @@ class ResNFe(XMLNFe):
         self.tpNF = TagInteiro(nome=u'tpNF', codigo=u'IR19' , tamanho=[1, 1, 1]     , raiz=u'//ret/resNFe',obrigatorio=False)
         self.vNF     = TagDecimal(nome=u'vNF'    , codigo=u'IR20', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'//ret/resNFe',obrigatorio=False)
         self.digVal    = TagCaracter(nome=u'digVal'  , codigo=u'IR21', tamanho=[28, 28]   , raiz=u'//ret/resNFe',obrigatorio=False)
-        self.dhRecbto = TagDataHora(nome=u'dhRecbto', codigo=u'IR22' , raiz=u'//ret/resNFe',obrigatorio=False)
+        self.dhRecbto = TagDataHoraUTC(nome=u'dhRecbto', codigo=u'IR22' , raiz=u'//ret/resNFe',obrigatorio=False)
         self.cSitNFe = TagInteiro(nome=u'cSitNFe', codigo=u'IR23' , tamanho=[1, 1, 1]     , raiz=u'//ret/resNFe',obrigatorio=False)
         self.cSitConf = TagInteiro(nome=u'cSitConf', codigo=u'IR24' , tamanho=[1, 1, 1]     , raiz=u'//ret/resNFe',obrigatorio=False)
 
@@ -248,7 +249,7 @@ class RetConsNFeDest(XMLNFe):
         self.verAplic = TagCaracter(nome=u'verAplic', codigo=u'IR04' , tamanho=[1, 20]     , raiz=u'//retConsNFeDest')
         self.cStat    = TagCaracter(nome=u'cStat'    , codigo=u'IR05' , tamanho=[3, 3, 3]   , raiz=u'//retConsNFeDest')
         self.xMotivo  = TagCaracter(nome=u'xMotivo' , codigo=u'IR06' , tamanho=[1, 255]    , raiz=u'//retConsNFeDest')
-        self.dhResp = TagCaracter(nome=u'dhResp', codigo=u'IR07' ,  tamanho=[ 0, 30],raiz=u'//retConsNFeDest')
+        self.dhResp = TagDataHora(nome=u'dhResp', codigo=u'IR07' , raiz=u'//retConsNFeDest')
         self.indCont = TagInteiro(nome=u'indCont', codigo=u'IR08' , tamanho=[1, 1, 1]     , raiz=u'//retConsNFeDest', obrigatorio=False)
         self.ultNSU = TagInteiro(nome=u'ultNSU', codigo=u'IR09' , tamanho=[1, 15]     , raiz=u'//retConsNFeDest',obrigatorio=False)
         self.ret = []

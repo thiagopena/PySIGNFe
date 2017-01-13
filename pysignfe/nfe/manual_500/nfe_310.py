@@ -390,7 +390,7 @@ class Comb(nfe_200.Comb):
     def __init__(self):
         super(Comb, self).__init__()
         self.pMixGN = TagInteiro(nome=u'pMixGN', codigo=u'L102a', tamanho=[2, 4],raiz=u'//det/prod/comb', obrigatorio=False)
-        self.nRECOPI = TagInteiro(nome=u'nRECOPI', codigo=u'L109', tamanho=[20, 20, 20], raiz=u'//det/prod/comb')
+        #self.nRECOPI = TagInteiro(nome=u'nRECOPI', codigo=u'L109', tamanho=[20, 20, 20], raiz=u'//det/prod/comb')
 
     def get_xml(self):
         if not self.cProdANP.valor:
@@ -404,7 +404,7 @@ class Comb(nfe_200.Comb):
         xml += self.qTemp.xml
         xml += self.UFCons.xml
         xml += self.CIDE.xml
-        xml += self.nRECOPI.xml
+        #xml += self.nRECOPI.xml
         xml += u'</comb>'
         return xml
 
@@ -416,7 +416,7 @@ class Comb(nfe_200.Comb):
             self.qTemp.xml     = arquivo
             self.UFCons.xml    = arquivo
             self.CIDE.xml      = arquivo
-            self.nRECOPI.xml   = arquivo
+            #self.nRECOPI.xml   = arquivo
 
     xml = property(get_xml, set_xml)
 
@@ -439,8 +439,6 @@ class VeicProd(nfe_200.VeicProd):
 class Adi(nfe_200.Adi):
     def __init__(self):
         super(Adi, self).__init__()
-        self.nDraw = TagInteiro(nome=u'nDraw'     , codigo=u'I29a' , tamanho=[11,  11], raiz=u'//DI')
-
 
 
 class DI(nfe_200.DI):
@@ -459,7 +457,7 @@ class DI(nfe_200.DI):
         self.UFTerceiro    = TagCaracter(nome=u'UFTerceiro'   , codigo=u'I23e' , tamanho=[ 0, 2]   , raiz=u'//DI')
         ###
         self.cExportador = TagCaracter(nome=u'cExportador', codigo=u'I24', tamanho=[1, 60], raiz=u'//DI')
-        self.adi         = [Adi()]
+        self.adi         = []
 
     def get_xml(self):
         if not self.nDI:
@@ -489,9 +487,9 @@ class DI(nfe_200.DI):
         if self._le_xml(arquivo):
             self.nDI.xml     = arquivo
             self.dDI.xml     = arquivo
-            self.xLocDesemb  = arquivo
-            self.UFDesemb    = arquivo
-            self.dDesemb     = arquivo
+            self.xLocDesemb.xml  = arquivo
+            self.UFDesemb.xml    = arquivo
+            self.dDesemb.xml     = arquivo
             #novos 3.10
             self.tpViaTransp.xml = arquivo
             self.vAFRMM.xml = arquivo
@@ -499,7 +497,7 @@ class DI(nfe_200.DI):
             self.CNPJ.xml = arquivo
             self.UFTerceiro.xml = arquivo
             #
-            self.cExportador = arquivo
+            self.cExportador.xml = arquivo
 
             #
             # Técnica para leitura de tags múltiplas
@@ -510,16 +508,16 @@ class DI(nfe_200.DI):
             adis = self._le_nohs('//DI/adi')
             self.adi = []
             if adis is not None:
-                self.adi = [_Adi() for a in adis]
+                self.adi = [Adi() for a in adis]
                 for i in range(len(adis)):
                     self.adi[i].xml = adis[i]
 
     xml = property(get_xml, set_xml)
 
 
-class exportInd(XMLNFe):
+class ExportInd(XMLNFe):
     def __init__(self):
-        super(exportInd, self).__init__()
+        super(ExportInd, self).__init__()
         self.nRE = TagDecimal(nome=u'nRE', codigo=u'I53', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'//exportInd')
         self.chNFe = TagDecimal(nome=u'chNFe'  , codigo=u'I54', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'//exportInd')
         self.qExport = TagDecimal(nome=u'qExport'  , codigo=u'I55', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'//exportInd')
@@ -543,9 +541,9 @@ class exportInd(XMLNFe):
     xml = property(get_xml, set_xml)
 
 
-class detExport(XMLNFe):
+class DetExport(XMLNFe):
     def __init__(self):
-        super(detExport, self).__init__()
+        super(DetExport, self).__init__()
         self.nDraw      = TagDecimal(nome=u'nDraw'  , codigo=u'I51', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'//detExport')
         self.exportInd  = exportInd()
 
@@ -570,7 +568,7 @@ class Prod(nfe_200.Prod):
     def __init__(self):
         super(Prod, self).__init__()
         self.NCM      = TagCaracter(nome=u'NCM'     , codigo=u'I05' , tamanho=[2,  8]                        , raiz=u'//det/prod')
-        self.NVE      = TagCaracter(nome=u'NVE'     , codigo=u'I05a', tamanho=[2,  8]                        , raiz=u'//det/prod',obrigatorio=False)
+        self.NVE      = TagCaracter(nome=u'NVE'     , codigo=u'I05a', tamanho=[0,  8]                        , raiz=u'//det/prod',obrigatorio=False)
         self.qCom     = TagDecimal(nome=u'qCom'     , codigo=u'I10' , tamanho=[1, 15, 1], decimais=[0,  4]  , raiz=u'//det/prod')
         self.vUnCom   = TagDecimal(nome=u'vUnCom'   , codigo=u'I10a', tamanho=[1, 21, 1], decimais=[0, 10]  , raiz=u'//det/prod')
         self.qTrib    = TagDecimal(nome=u'qTrib'    , codigo=u'I14' , tamanho=[1, 15, 1], decimais=[0,  4], raiz=u'//det/prod')
@@ -582,6 +580,7 @@ class Prod(nfe_200.Prod):
         self.nFCI     = TagCaracter(nome=u'nFCI', codigo=u'I70', tamanho=[1,36],                               raiz=u'//det/prod', obrigatorio=False)
         self.veicProd = VeicProd()
         self.comb     = Comb()
+        self.detExport = []
 
     def get_xml(self):
         xml = XMLNFe.get_xml(self)
@@ -610,6 +609,9 @@ class Prod(nfe_200.Prod):
 
         for d in self.DI:
             xml += d.xml
+            
+        for de in self.detExport:
+            xml += de.xml
 
         xml += self.xPed.xml
         xml += self.nItemPed.xml
@@ -656,6 +658,7 @@ class Prod(nfe_200.Prod):
             # lidas corretamente
             #
             self.DI = self.le_grupo('//det/prod/DI', DI)
+            self.detExport = self.le_grupo('//det/prod/detExport', DetExport)
             self.nFCI.xml = arquivo
             self.veicProd.xml = arquivo
 
@@ -749,7 +752,6 @@ class Card(XMLNFe):
     xml = property(get_xml, set_xml)
 
 class Pag(XMLNFe):
-
      # Formas de pagamento NFC-e.
     def __init__(self):
         super(Pag, self).__init__()
@@ -895,8 +897,7 @@ class ISSQNTot(nfe_200.ISSQNTot):
 class ICMSTot(nfe_200.ICMSTot):
     def __init__(self):
         super(ICMSTot, self).__init__()
-        self.vICMSDeson  = TagDecimal(nome=u'vICMSDeson'  , codigo=u'W04a', tamanho=[1, 15, 1],
-                                      decimais=[0, 2, 2], raiz=u'//NFe/infNFe/total/ICMSTot',valor=u'0.00')
+        self.vICMSDeson  = TagDecimal(nome=u'vICMSDeson'  , codigo=u'W04a', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'//NFe/infNFe/total/ICMSTot',valor=u'0.00')
 
     def get_xml(self):
         xml = XMLNFe.get_xml(self)
@@ -976,7 +977,6 @@ class Retirada(nfe_200.Retirada):
         super(Retirada, self).__init__()
 
 
-
 class autXML(XMLNFe):
     def __init__(self):
         super(autXML, self).__init__()
@@ -1003,7 +1003,6 @@ class autXML(XMLNFe):
 class EnderDest(nfe_200.EnderDest):
     def __init__(self):
         super(EnderDest, self).__init__()
-
         self.xLgr    = TagCaracter(nome=u'xLgr'   , codigo=u'E06', tamanho=[ 2, 60]   , raiz=u'//NFe/infNFe/dest/enderDest')
         self.nro     = TagCaracter(nome=u'nro'    , codigo=u'E07', tamanho=[ 1, 60]   , raiz=u'//NFe/infNFe/dest/enderDest')
         self.xCpl    = TagCaracter(nome=u'xCpl'   , codigo=u'E08', tamanho=[ 1, 60]   , raiz=u'//NFe/infNFe/dest/enderDest', obrigatorio=False)
@@ -1015,7 +1014,6 @@ class EnderDest(nfe_200.EnderDest):
         self.cPais   = TagInteiro(nome=u'cPais'   , codigo=u'E14', tamanho=[ 4,  4, 4], raiz=u'//NFe/infNFe/dest/enderDest', obrigatorio=False)
         self.xPais   = TagCaracter(nome=u'xPais'  , codigo=u'E15', tamanho=[ 1, 60]   , raiz=u'//NFe/infNFe/dest/enderDest', obrigatorio=False)
         self.fone    = TagInteiro(nome=u'fone'    , codigo=u'E16', tamanho=[ 1, 10]   , raiz=u'//NFe/infNFe/dest/enderDest', obrigatorio=False)
-        # self.indIEDest    = TagCaracter(nome=u'indIEDest'    , codigo=u'E16a', tamanho=[ 1, 1], raiz=u'//NFe/infNFe/dest/enderDest', valor=u'9')
 
     def get_xml(self):
         xml = XMLNFe.get_xml(self)
@@ -1031,7 +1029,6 @@ class EnderDest(nfe_200.EnderDest):
         xml += self.cPais.xml
         xml += self.xPais.xml
         xml += self.fone.xml
-        # xml += self.indIEDest.xml
         xml += u'</enderDest>'
         return xml
 
@@ -1048,9 +1045,9 @@ class EnderDest(nfe_200.EnderDest):
             self.cPais.xml   = arquivo
             self.xPais.xml   = arquivo
             self.fone.xml    = arquivo
-            # self.indIEDest.xml = arquivo
 
     xml = property(get_xml, set_xml)
+    
 
 class Dest(nfe_200.Dest):
     def __init__(self):
@@ -1060,6 +1057,7 @@ class Dest(nfe_200.Dest):
         self.IE        = TagCaracter(nome=u'IE'   , codigo=u'E17', tamanho=[ 2, 14]   , raiz=u'//NFe/infNFe/dest',obrigatorio=False)
         self.xNome     = TagCaracter(nome=u'xNome', codigo=u'E04', tamanho=[ 2, 60]   , raiz=u'//NFe/infNFe/dest',obrigatorio=False)
         self.indIEDest    = TagCaracter(nome=u'indIEDest'    , codigo=u'E16a', tamanho=[ 1, 1], raiz=u'//NFe/infNFe/dest', valor=u'9')
+        
     def get_xml(self):
         xml = XMLNFe.get_xml(self)
         xml += u'<dest>'
@@ -1091,8 +1089,6 @@ class Dest(nfe_200.Dest):
             self.email.xml     = arquivo
 
     xml = property(get_xml, set_xml)
-
-
 
 
 class Avulsa(nfe_200.Avulsa):
@@ -1135,8 +1131,7 @@ class Ide(nfe_200.Ide):
         super(Ide, self).__init__()
         self.mod     = TagInteiro(nome=u'mod'     , codigo=u'B06', tamanho=[ 2,  2, 2], raiz=u'//NFe/infNFe/ide')
         # A tag dEmi nao sera mais utilizada agora sera a dhEmi
-        self.dEmi    = TagData(nome=u'dEmi'       , codigo=u'B09',                      raiz=u'//NFe/infNFe/ide',obrigatorio=False)
-
+        #self.dEmi    = TagData(nome=u'dEmi'       , codigo=u'B09',                      raiz=u'//NFe/infNFe/ide',obrigatorio=False)
         self.dhEmi    = TagDataHoraUTC(nome=u'dhEmi'       , codigo=u'B09',                      raiz=u'//NFe/infNFe/ide')
         self.dhSaiEnt  = TagDataHoraUTC(nome=u'dhSaiEnt'       , codigo=u'B10',                      raiz=u'//NFe/infNFe/ide')
         self.hSaiEnt = TagDataHoraUTC(nome=u'hSaiEnt'    , codigo=u'B10a',                     raiz=u'//NFe/infNFe/ide', obrigatorio=False)
@@ -1144,8 +1139,6 @@ class Ide(nfe_200.Ide):
         self.indFinal = TagCaracter(nome=u'indFinal'   , codigo=u'B25a',                      raiz=u'//NFe/infNFe/ide', valor=u'0')
         self.indPres  = TagCaracter(nome=u'indPres'    , codigo=u'B25b',                      raiz=u'//NFe/infNFe/ide', valor=u'9')
         self.dhCont   = TagDataHoraUTC(nome=u'dhCont', codigo=u'B28',                      raiz=u'//NFe/infNFe/ide', obrigatorio=False)
-
-
 
     def get_xml(self):
         xml = XMLNFe.get_xml(self)
@@ -1161,13 +1154,8 @@ class Ide(nfe_200.Ide):
         xml += self.dhSaiEnt.xml
         xml += self.tpNF.xml
         xml += self.idDest.xml
-
         xml += self.cMunFG.xml
-
-        for nr in self.NFref:
-            xml += nr.xml
-
-
+            
         xml += self.tpImp.xml
         xml += self.tpEmis.xml
         xml += self.cDV.xml
@@ -1181,6 +1169,10 @@ class Ide(nfe_200.Ide):
         xml += self.verProc.xml
         xml += self.dhCont.xml
         xml += self.xJust.xml
+        
+        for nr in self.NFref:
+            xml += nr.xml
+            
         xml += '</ide>'
         return xml
 
@@ -1309,36 +1301,10 @@ class InfNFe(nfe_200.InfNFe):
     xml = property(get_xml, set_xml)
     
 
-#Informacao suplementar, apenas para NFC-e
-class InfNFeSupl(XMLNFe):
-    def __init__(self):
-        super(InfNFeSupl, self).__init__()
-        self.qrCode  = TagCaracter(nome=u'qrCode', codigo=u'ZX02', tamanho=[100, 600], raiz=u'//NFe/infNFeSupl')
-
-    def get_xml(self):
-        if not self.qrCode.valor:
-            return ''
-        xml = XMLNFe.get_xml(self)
-        xml += u'<infNFeSupl><![CDATA['
-        xml += self.qrCode.xml
-        xml += u']]></infNFeSupl>'
-        return xml
-
-    def set_xml(self, arquivo):
-        if self._le_xml(arquivo):
-            self.qrCode.xml     = arquivo
-
-    xml = property(get_xml, set_xml)
-    
-    
-
 class NFe(nfe_200.NFe):
     def __init__(self):
         super(NFe, self).__init__()
         self.infNFe = InfNFe()
-        ##NFC-e
-        self.infNFeSupl = InfNFeSupl()
-        
         self.via_estabelecimento = False
         
         self.Signature = Signature()
@@ -1478,46 +1444,6 @@ class NFe(nfe_200.NFe):
             troco = 0
         return locale.format(u'%.2f', troco, 1)
     
-    def endereco_consulta_chave_nfce(self):
-        url_consulta = CONSULTA_CHAVE_NFCE[self.infNFe.emit.enderEmit.UF.valor]
-        if url_consulta == '':
-            raise ValueError('UF não habilitado para NFC-e')
-        return url_consulta
-        
-    def gera_qrcode_nfce(self, csc, cidtoken='000001', nversao='100'):
-        
-        url_consulta_qrcode = CONSULTA_QRCODE_NFCE[self.infNFe.emit.enderEmit.UF.valor]
-        if url_consulta_qrcode == '':
-            raise ValueError('UF não habilitado para NFC-e')
-        
-        ##Montando parametros:
-        params_qrcode = u'chNFe=' + unicode(self.chave) + u'&'
-        params_qrcode += u'nVersao=' + unicode(nversao) + u'&'
-        params_qrcode += u'tpAmp=' + unicode(self.infNFe.ide.tpAmb.valor) + u'&'
-        if (self.infNFe.dest.CPF.valor or self.infNFe.dest.CNPJ.valor or self.infNFe.dest.idEstrangeiro.valor):
-            params_qrcode += u'cDest=' + unicode(self.infNFe.dest.CPF.valor or self.infNFe.dest.CNPJ.valor or self.infNFe.dest.idEstrangeiro.valor) + u'&'
-        
-        ##Converter dhEmi e o digest para Hex:
-        dhemi_hex = "".join("{:02x}".format(ord(c)) for c in self.infNFe.ide.dhEmi.valor.isoformat())
-        digval_hex = "".join("{:02x}".format(ord(c)) for c in self.Signature.DigestValue)
-        
-        params_qrcode += u'dhEmi=' + unicode(dhemi_hex) + u'&'
-        params_qrcode += u'vNF=' + unicode(self.infNFe.total.ICMSTot.vNF.valor) + u'&'
-        params_qrcode += u'vICMS=' + unicode(self.infNFe.total.ICMSTot.vICMS.valor) + u'&'
-        params_qrcode += u'digVal=' + unicode(digval_hex) + u'&'
-        params_qrcode += u'cIdToken=' + unicode(cidtoken.zfill(6)) + u'&'
-        
-        ##Calcular cHashQRCode
-        hash_string = params_qrcode + csc
-        hash_object = hashlib.sha1(hash_string.encode('utf-8'))
-        chash_qrcode = hash_object.hexdigest()
-        
-        params_qrcode += u'cHashQRCode=' + unicode(chash_qrcode)
-        
-        params_qrcode = url_consulta_qrcode + params_qrcode
-                
-        self.infNFeSupl.qrCode.valor = params_qrcode
-        
     def id_consumidor(self):
         idcons = ''
         if self.infNFe.dest.CPF.valor:
@@ -1539,12 +1465,6 @@ class NFe(nfe_200.NFe):
     def id_nfce(self):
         id_nota = u' ' + self.numero_formatado()
         id_nota += u' ' + self.serie_formatada()
-        #id_nota += u' ' + self.infNFe.ide.dhEmi.formato_danfe()
-        #id_nota += u' Data de emissão: ' + self.infNFe.ide.dhEmi.formato_danfe_nfce()
-        #if not self.via_estabelecimento:
-        #    id_nota += u' - Via do Consumidor'
-        #else:
-        #    id_nota += u' - Via do Estabelecimento'
         return id_nota
     
     def data_emissao_danfe_nfce(self):

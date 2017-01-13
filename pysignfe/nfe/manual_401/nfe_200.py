@@ -65,7 +65,7 @@ class Cana(XMLNFe):
     def __init__(self):
         super(Cana, self).__init__()
         self.safra   = TagCaracter(nome=u'safra' , codigo=u'ZC02', tamanho=[4,  9]                         , raiz=u'//NFe/infNFe/cana')
-        self.ref     = TagCaracter(nome=u'ref'   , codigo=u'ZC03', tamanho=[6,  6]                         , raiz=u'//NFe/infNFe/cana')
+        self.ref     = TagCaracter(nome=u'ref'   , codigo=u'ZC03', tamanho=[7,  7]                         , raiz=u'//NFe/infNFe/cana')
         self.forDia  = []
         self.qTotMes = TagDecimal(nome=u'qTotMes', codigo=u'ZC07', tamanho=[1, 11, 1], decimais=[1, 10, 10], raiz=u'//NFe/infNFe/cana')
         self.qTotAnt = TagDecimal(nome=u'qTotAnt', codigo=u'ZC08', tamanho=[1, 11, 1], decimais=[1, 10, 10], raiz=u'//NFe/infNFe/cana')
@@ -161,7 +161,6 @@ class TagCSTCOFINS(nfe_110.TagCSTCOFINS):
 class COFINS(nfe_110.COFINS):
     def __init__(self):
         super(COFINS, self).__init__()
-
 
 class PISST(nfe_110.PISST):
     def __init__(self):
@@ -1323,7 +1322,6 @@ class Entrega(nfe_110.Entrega):
         self.CNPJ    = TagCaracter(nome=u'CNPJ'   , codigo=u'G02' , tamanho=[ 0, 14]   , raiz=u'//NFe/infNFe/retirada')
         self.CPF     = TagCaracter(nome=u'CPF'    , codigo=u'G02a', tamanho=[11, 11]   , raiz=u'//NFe/infNFe/retirada')
 
-
     def get_xml(self):
         if not (self.CNPJ.valor or self.CPF.valor):
             return u''
@@ -1366,7 +1364,6 @@ class Retirada(nfe_110.Retirada):
         super(Retirada, self).__init__()
         self.CNPJ    = TagCaracter(nome=u'CNPJ'   , codigo=u'F02' , tamanho=[ 0, 14]   , raiz=u'//NFe/infNFe/retirada')
         self.CPF     = TagCaracter(nome=u'CPF'    , codigo=u'F02a', tamanho=[11, 11]   , raiz=u'//NFe/infNFe/retirada')
-
 
     def get_xml(self):
         if not (self.CNPJ.valor or self.CPF.valor):
@@ -1465,7 +1462,6 @@ class Emit(nfe_110.Emit):
         super(Emit, self).__init__()
         self.enderEmit = EnderEmit()
         self.CRT       = TagInteiro(nome=u'CRT'  , codigo=u'C21' , tamanho=[ 1,  1], raiz=u'//NFe/infNFe/emit', valor=1)
-
 
     def get_xml(self):
         xml = XMLNFe.get_xml(self)

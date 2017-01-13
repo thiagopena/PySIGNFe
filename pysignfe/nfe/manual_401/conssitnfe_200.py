@@ -25,7 +25,7 @@ class RetConsSitNFe(conssitnfe_107.RetConsSitNFe):
         self.cStat      = TagCaracter(nome=u'cStat'       , codigo=u'ER05' , tamanho=[1,   3]   , raiz=u'//retConsSitNFe')
         self.xMotivo    = TagCaracter(nome=u'xMotivo'     , codigo=u'ER06' , tamanho=[1, 2000]   , raiz=u'//retConsSitNFe')
         self.cUF        = TagInteiro(nome=u'cUF'          , codigo=u'ER07' , tamanho=[2,   2, 2], raiz=u'//retConsSitNFe')
-        self.chNFe      = TagCaracter(nome=u'chNFe'       , codigo=u'ER07a', tamanho=[44,  44]  , raiz=u'//retConsSitNFe', obrigatorio=False)
+        self.chNFe      = TagCaracter(nome=u'chNFe'       , codigo=u'ER07b', tamanho=[44,  44]  , raiz=u'//retConsSitNFe', obrigatorio=False)
         self.protNFe    = None
         self.retCancNFe = None
         self.caminho_esquema = os.path.join(DIRNAME, u'schema', ESQUEMA_ATUAL + u'/')

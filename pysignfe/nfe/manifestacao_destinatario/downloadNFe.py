@@ -61,6 +61,9 @@ class ProcNFeGrupoZip(XMLNFe):
         self.protNFeZip = TagCaracter(nome='protNFeZip', codigo='JR14', raiz='//retNFe/procNFeGrupoZip')
 
     def get_xml(self):
+        if not self.NFeZip.valor:
+            return ''
+            
         xml = XMLNFe.get_xml(self)
 
         if self.NFeZip.valor and self.protNFeZip.valor:
@@ -138,7 +141,7 @@ class RetDownloadNFe(XMLNFe):
         self.verAplic = TagCaracter(nome=u'verAplic', codigo=u'JR04' , tamanho=[1, 20]     , raiz=u'//retDownloadNFe')
         self.cStat    = TagCaracter(nome=u'cStat'    , codigo=u'JR05' , tamanho=[3, 3, 3]   , raiz=u'//retDownloadNFe')
         self.xMotivo  = TagCaracter(nome=u'xMotivo' , codigo=u'JR06' , tamanho=[1, 255]    , raiz=u'//retDownloadNFe')
-        self.dhResp = TagCaracter(nome=u'dhResp', codigo=u'JR07' ,  tamanho=[ 0, 30],raiz=u'//retDownloadNFe')
+        self.dhResp = TagDataHora(nome=u'dhResp', codigo=u'JR07' , raiz=u'//retDownloadNFe')
         #self.retNFe = RetNFe()
         self.retNFe = []
         self.caminho_esquema = os.path.join(DIRNAME, u'schema/', ESQUEMA_ATUAL + u'/')

@@ -11,9 +11,9 @@ from geraldo.barcodes import BarCode
 from pysignfe.relato_sped import *
 
 
-class DANFENFCe(Report):
+class DANFCE(Report):
     def __init__(self, *args, **kargs):
-        super(DANFENFCe, self).__init__(*args, **kargs)
+        super(DANFCE, self).__init__(*args, **kargs)
         self.title = 'Documento Auxiliar da Nota Fiscal de Consumidor Eletrônica'
         self.print_if_empty = True
         self.additional_fonts = FONTES_ADICIONAIS

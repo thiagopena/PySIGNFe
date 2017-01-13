@@ -119,7 +119,7 @@ SVAN = {
         WS_NFE_CONSULTA_RECIBO : u'NFeRetRecepcao2/NFeRetRecepcao2.asmx',
         WS_NFE_CANCELAMENTO    : u'NFeCancelamento2/NFeCancelamento2.asmx',
         WS_NFE_EVENTO : u'RecepcaoEvento/RecepcaoEvento.asmx',
-        WS_NFE_CONSULTA_DESTINATARIO : u'NFeConsultaDest/NFeConsultaDest.asmx',
+        #WS_NFE_CONSULTA_DESTINATARIO : u'NFeConsultaDest/NFeConsultaDest.asmx',
         WS_NFE_INUTILIZACAO    : u'NFeInutilizacao2/NFeInutilizacao2.asmx',
         WS_NFE_CONSULTA        : u'nfeconsulta2/nfeconsulta2.asmx',
         WS_NFE_SITUACAO        : u'NFeStatusServico2/NFeStatusServico2.asmx',
@@ -702,6 +702,24 @@ SVC_AN = {
         WS_NFE_AUTORIZACAO: u'NfeAutorizacao/NfeAutorizacao.asmx',
         WS_NFE_RET_AUTORIZACAO: u'NfeRetAutorizacao/NfeRetAutorizacao.asmx'
     }
+}
+
+
+AN = {
+    NFE_AMBIENTE_PRODUCAO: {
+        'servidor': 'www.nfe.fazenda.gov.br',
+        WS_NFE_EVENTO   : 'RecepcaoEvento/RecepcaoEvento.asmx',
+        WS_NFE_CONSULTA_DESTINATARIO: 'NFeConsultaDest/NFeConsultaDest.asmx',
+        WS_NFE_DOWNLOAD_XML_DESTINATARIO: 'NfeDownloadNF/NfeDownloadNF.asmx',
+        #WS_NFE_DISTRIBUICAO_DFE: 'NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx',
+    },
+    NFE_AMBIENTE_HOMOLOGACAO: {
+        'servidor': 'hom.nfe.fazenda.gov.br',
+        WS_NFE_EVENTO   : 'RecepcaoEvento/RecepcaoEvento.asmx',
+        WS_NFE_CONSULTA_DESTINATARIO: 'NFeConsultaDest/NFeConsultaDest.asmx',
+        WS_NFE_DOWNLOAD_XML_DESTINATARIO: 'NfeDownloadNF/NfeDownloadNF.asmx',
+        #WS_NFE_DISTRIBUICAO_DFE: 'NFeDistribuicaoDFe/NFeDistribuicaoDFe.asmx',
+    },
 }
 
 '''

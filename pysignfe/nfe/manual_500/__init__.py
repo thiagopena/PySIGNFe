@@ -51,16 +51,16 @@ from .cancnfe_310 import ProcCancNFe as ProcCancNFe_310
 #
 # Cancelamento de NF-e por EVENTO
 
-from .cancnfe_evento import EnvEvento as EnvEvento_310
-from .cancnfe_evento import RetEnvEvento as RetEnvEvento_310
-from .cancnfe_evento import ProcEventoNFe as ProcEventoNFe_310
+from .cancnfe_evento import EnvEventoCancNFe as EnvEventoCancNFe_310
+from .cancnfe_evento import RetEnvEventoCancNFe as RetEnvEventoCancNFe_310
+from .cancnfe_evento import ProcEventoNFeCancNFe as ProcEventoNFeCancNFe_310
 
 #
 # Carta de Correção
 
-from .carta_correcao import EnvEvento as EnvEventoCCe_310
-from .carta_correcao import RetEnvEvento as RetEnvEventoCCe_310
-from .carta_correcao import ProcEventoNFe as ProcEventoNFeCCe_310
+from .carta_correcao import EnvEventoCCe as EnvEventoCCe_310
+from .carta_correcao import RetEnvEventoCCe as RetEnvEventoCCe_310
+from .carta_correcao import ProcEventoNFeCCe as ProcEventoNFeCCe_310
 
 #
 # Inutilização de NF-e

@@ -6,8 +6,9 @@ import os
 DIRNAME = os.path.dirname(__file__)
 from pysignfe.xml_sped import *
 
-class _InfConsEnviado(XMLNFe):
+class InfConsEnviado(XMLNFe):
     def __init__(self):
+        super(InfConsEnviado, self).__init__()
         self.xServ = TagCaracter(nome=u'xServ', codigo=u'GP04', tamanho=[8, 8]  , raiz=u'//ConsCad', valor=u'CONS-CAD')
         self.UF    = TagCaracter(nome=u'UF'   , codigo=u'GP05', tamanho=[2, 2]  , raiz=u'//ConsCad')
         self.IE    = TagCaracter(nome=u'IE'   , codigo=u'GP06', tamanho=[2, 14] , raiz=u'//ConsCad', obrigatorio=False)
@@ -39,7 +40,7 @@ class _InfConsEnviado(XMLNFe):
 class ConsCad(XMLNFe):
     def __init__(self):
         self.versao = TagDecimal(nome=u'ConsCad', codigo=u'GP01', propriedade=u'versao', namespace=NAMESPACE_NFE, valor=u'2.00', raiz=u'/')
-        self.infCons = _InfConsEnviado()
+        self.infCons = InfConsEnviado()
         self.caminho_esquema = os.path.join(DIRNAME, u'schema/', ESQUEMA_ATUAL + u'/')
         self.arquivo_esquema = u'consCad_v2.00.xsd'
 
@@ -96,8 +97,9 @@ class Ender(XMLNFe):
     xml = property(get_xml, set_xml)
 
 
-class _InfCadRecebido(XMLNFe):
+class InfCadRecebido(XMLNFe):
     def __init__(self):
+        super(InfCadRecebido, self).__init__()
         self.IE       = TagCaracter(nome=u'IE'      , codigo=u'GR08' , tamanho=[2, 14], raiz=u'//infCad')
         self.CNPJ     = TagCaracter(nome=u'CNPJ'    , codigo=u'GR09' , tamanho=[3, 14], raiz=u'//infCad')
         self.CPF      = TagCaracter(nome=u'CPF'     , codigo=u'GR10' , tamanho=[3, 11], raiz=u'//infCad')
@@ -161,27 +163,10 @@ class _InfCadRecebido(XMLNFe):
 
     xml = property(get_xml, set_xml)
 
-class InfCad(XMLNFe):
+
+class InfConsRecebido(XMLNFe):
     def __init__(self):
-        super(InfCad, self).__init__()
-        self.infCad   = TagCaracter(nome=u'infCad' , codigo=u'GR07',  raiz=u'/')
-
-
-    def get_xml(self):
-        xml = XMLNFe.get_xml(self)
-
-        xml += u'</infCad>'
-        return xml
-
-    def set_xml(self, arquivo):
-        if self._le_xml(arquivo):
-            self.infCad.xml = arquivo
-
-
-    xml = property(get_xml, set_xml)
-
-class _InfConsRecebido(XMLNFe):
-    def __init__(self):
+        super(InfConsRecebido, self).__init__()
         self.verAplic = TagCaracter(nome=u'verAplic', codigo=u'GR04' , tamanho=[1, 20]  , raiz=u'//retConsCad/infCons')
         self.cStat    = TagCaracter(nome=u'cStat'    , codigo=u'GR05' , tamanho=[3, 3, 3], raiz=u'//retConsCad/infCons')
         self.xMotivo  = TagCaracter(nome=u'xMotivo' , codigo=u'GR06' , tamanho=[1, 255] , raiz=u'//retConsCad/infCons')
@@ -189,7 +174,7 @@ class _InfConsRecebido(XMLNFe):
         self.IE       = TagCaracter(nome=u'IE'      , codigo=u'GR06b', tamanho=[2, 14]  , raiz=u'//retConsCad/infCons', obrigatorio=False)
         self.CNPJ     = TagCaracter(nome=u'CNPJ'    , codigo=u'GR06c', tamanho=[3, 14]  , raiz=u'//retConsCad/infCons', obrigatorio=False)
         self.CPF      = TagCaracter(nome=u'CPF'     , codigo=u'GR06d', tamanho=[3, 11]  , raiz=u'//retConsCad/infCons', obrigatorio=False)
-        self.dhCons   = TagDataHora(nome=u'dhCons'  , codigo=u'GR06e',                    raiz=u'//retConsCad/infCons')
+        self.dhCons   = TagDataHoraUTC(nome=u'dhCons'  , codigo=u'GR06e',                    raiz=u'//retConsCad/infCons')
         self.cUF      = TagInteiro(nome=u'cUF'      , codigo=u'GR06f', tamanho=[2, 2, 2], raiz=u'//retConsCad/infCons')
         self.infCad   = []
 
@@ -232,8 +217,9 @@ class _InfConsRecebido(XMLNFe):
 
 class RetConsCad(XMLNFe):
     def __init__(self):
+        super(RetConsCad, self).__init__()
         self.versao = TagDecimal(nome=u'retConsCad', codigo=u'GR01', propriedade=u'versao', namespace=NAMESPACE_NFE, valor=u'2.00', raiz=u'/')
-        self.infCons = _InfConsRecebido()
+        self.infCons = InfConsRecebido()
         self.caminho_esquema = os.path.join(DIRNAME, u'schema/', ESQUEMA_ATUAL + u'/')
         self.arquivo_esquema = u'retConsCad_v2.00.xsd'
 

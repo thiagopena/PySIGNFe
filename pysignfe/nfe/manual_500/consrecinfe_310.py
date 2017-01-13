@@ -28,15 +28,6 @@ class ProtNFe(consrecinfe_200.ProtNFe):
         self.versao  = TagDecimal(nome=u'protNFe', codigo=u'PR02' , propriedade=u'versao', namespace=NAMESPACE_NFE, valor=u'3.10', raiz=u'/')
         self.infProt = InfProt()
     
-    def protocolo_formatado_nfce(self):
-        if not self.infProt.nProt.valor:
-            return u''
-        return u'Protocolo de autorização: '+ self.infProt.nProt.valor
-        
-    def data_autorizacao_nfce(self):
-        if not self.infProt.nProt.valor:
-            return u''
-        return u'Data de autorização: '+ self.infProt.dhRecbto.formato_danfe_nfce()
 
 class RetConsReciNFe(consrecinfe_200.RetConsReciNFe):
     def __init__(self):

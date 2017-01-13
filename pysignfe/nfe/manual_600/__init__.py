@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-ESQUEMA_ATUAL = u'pl_008e'
+ESQUEMA_ATUAL = u'PL_008i2'
 
 #
 # Envelopes SOAP
@@ -51,16 +51,26 @@ from .cancnfe_310 import ProcCancNFe as ProcCancNFe_310
 #
 # Cancelamento de NF-e por EVENTO
 
-from .cancnfe_evento import EnvEvento as EnvEvento_310
-from .cancnfe_evento import RetEnvEvento as RetEnvEvento_310
-from .cancnfe_evento import ProcEventoNFe as ProcEventoNFe_310
+from .cancnfe_evento import EventoCancNFe as EventoCancNFe_310
+from .cancnfe_evento import EnvEventoCancNFe as EnvEventoCancNFe_310
+from .cancnfe_evento import RetEnvEventoCancNFe as RetEnvEventoCancNFe_310
+from .cancnfe_evento import ProcEventoNFeCancNFe as ProcEventoNFeCancNFe_310
 
 #
-# Carta de Correção
+# Carta de Correção EVENTO
 
-from .carta_correcao import EnvEvento as EnvEventoCCe_310
-from .carta_correcao import RetEnvEvento as RetEnvEventoCCe_310
-from .carta_correcao import ProcEventoNFe as ProcEventoNFeCCe_310
+from .carta_correcao import EventoCCe as EventoCCe_310
+from .carta_correcao import EnvEventoCCe as EnvEventoCCe_310
+from .carta_correcao import RetEnvEventoCCe as RetEnvEventoCCe_310
+from .carta_correcao import ProcEventoNFeCCe as ProcEventoNFeCCe_310
+
+#
+# EPEC EVENTO
+#
+from .epec_evento import EventoEPEC as EventoEPEC_310
+from .epec_evento import EnvEventoEPEC as EnvEventoEPEC_310
+from .epec_evento import RetEnvEventoEPEC as RetEnvEventoEPEC_310
+from .epec_evento import ProcEventoNFeEPEC as ProcEventoNFeEPEC_310
 
 #
 # Inutilização de NF-e

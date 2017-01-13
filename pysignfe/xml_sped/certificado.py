@@ -138,14 +138,14 @@ class Certificado(object):
         #String para bytes para a leitura no signxml
         chave = self.chave.encode('utf-8')
         certificado = self.certificado.encode('utf-8')
-                
+        
         signer = XMLSigner(method=methods.enveloped, signature_algorithm='rsa-sha1', digest_algorithm='sha1', c14n_algorithm='http://www.w3.org/TR/2001/REC-xml-c14n-20010315')
         
         #Retirar os prefixos ds: da assinatura
         ns = {}
         ns[None] = signer.namespaces['ds']
         signer.namespaces = ns
-                        
+        
         #Assina o documento
         signed_doc = signer.sign(doc_xml, key=chave, cert=certificado, reference_uri='#{0}'.format(chave_de_acesso))
         
@@ -155,7 +155,8 @@ class Certificado(object):
             if 'Signature' in child.tag:
                 signature_tag = child
         if signature_tag is None:
-            raise("Assinatura nao encontrada!")
+            raise("Assinatura nao encontrada.")
+            
         signature_tag = lxml.etree.tostring(signature_tag).decode('utf-8')
                 
         signature_tag = self._finaliza_xml(signature_tag)

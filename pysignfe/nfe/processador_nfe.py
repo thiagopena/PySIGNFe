@@ -437,7 +437,7 @@ class ProcessadorNFe(object):
         
         nome_arq = datetime.now().strftime('%Y%m%d%H%M%S')
         
-        #Nome do arquivo será a primeira chave da lista_chaves
+        #Nome do arquivo será a data e hora atual
         if self.salvar_arquivos:
             novo_arquivo_nome = nome_arq + u'-env-downloadnfe.xml'
             novo_arquivo = envio.xml.encode('utf-8')

@@ -32,7 +32,7 @@ if __name__ == '__main__':
     nfe.infNFe.ide.indPag.valor     = 2  
     nfe.infNFe.ide.serie.valor      = 101    
     nfe.infNFe.ide.nNF.valor        = 27
-    nfe.infNFe.ide.dEmi.valor       = datetime(2016, 10, 14)  
+    nfe.infNFe.ide.dEmi.valor       = datetime(2016, 10, 14)
     nfe.infNFe.ide.dSaiEnt.valor    = datetime(2016, 10, 14)
     nfe.infNFe.ide.tpImp.valor      = 1
     nfe.infNFe.ide.tpEmis.valor     = 1

@@ -6,8 +6,10 @@ sys.path.insert(0, os.path.abspath(".."))
 
 from pysignfe.nf_e import nf_e
 
-from pysignfe.nfe.manual_500.nfe_310 import NFe as NFe_310
-from pysignfe.nfe.manual_500.nfe_310 import Det as Det_310
+#from pysignfe.nfe.manual_500.nfe_310 import NFe as NFe_310
+from pysignfe.nfe.manual_600.nfe_310 import NFe as NFe_310
+#from pysignfe.nfe.manual_500.nfe_310 import Det as Det_310
+from pysignfe.nfe.manual_600.nfe_310 import Det as Det_310
 from pysignfe.nfe.webservices_flags import UF_CODIGO
 
 if __name__ == '__main__':
@@ -31,7 +33,8 @@ if __name__ == '__main__':
     nfe.infNFe.ide.indPag.valor     = 2  
     nfe.infNFe.ide.serie.valor      = 101    
     nfe.infNFe.ide.nNF.valor        = 27    
-    nfe.infNFe.ide.dhEmi.valor       = datetime(2016, 10, 14)  
+    #nfe.infNFe.ide.dhEmi.valor       = datetime(2016, 10, 14)  
+    nfe.infNFe.ide.dhEmi.valor       = datetime.utcnow()
     nfe.infNFe.ide.dhSaiEnt.valor    = datetime(2016, 10, 14)
     nfe.infNFe.ide.tpImp.valor      = 1            
     nfe.infNFe.ide.tpEmis.valor     = 1            

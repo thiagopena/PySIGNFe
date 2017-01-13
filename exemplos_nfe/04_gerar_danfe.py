@@ -8,7 +8,7 @@ from pysignfe.nf_e import nf_e
 if __name__ == '__main__':
     nova_nfe = nf_e()
     
-    ##Gerar danfe a partir de uma NFe já processada
+    ##Gerar danfe a partir de uma NFe ja processada
     #f = open("procNFe_danfe_paisagem.xml", encoding='utf8')
     f = open("procNFe_danfe_retrato.xml", encoding='utf8')
     nfe_str = f.read()

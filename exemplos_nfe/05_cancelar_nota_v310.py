@@ -17,12 +17,12 @@ if __name__ == '__main__':
     info_certificado = nova_nfe.extrair_certificado_a1(arquivo, "associacao")
     
     ##Modificar os dados abaixo
-    cnpj = u'99999999000191'
+    #cnpj = u'99999999000191'
     chave = u'35100910142785000190552000000000071946226632'
     protocolo = u'135100026181256'
     justificativa = u'Teste de cancelamento de NF-e'
     
-    resultados = nova_nfe.cancelar_nota(cnpj=cnpj, chave=chave, protocolo=protocolo, justificativa=justificativa, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False)
+    resultados = nova_nfe.cancelar_nota(chave=chave, protocolo=protocolo, justificativa=justificativa, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False)
     print("\nResultado:\n")
     '''Retorna um dicionario'''
     for key, value in resultados.items():

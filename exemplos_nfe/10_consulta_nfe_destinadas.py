@@ -17,6 +17,8 @@ if __name__ == '__main__':
     info_certificado = nova_nfe.extrair_certificado_a1(arquivo, "associacao")
     
     ##Modificar os dados abaixo
+    
+    #CNPJ do destinatário da NF-e. 
     cnpj = u'99999999000191'
     '''
     Indicador de NF-e consultada:
@@ -34,7 +36,7 @@ if __name__ == '__main__':
     indemi = u'0'
     
     '''
-    Último NSU recebido pela Empresa.
+    Último NSU recebido.
     Caso seja informado com zero, ou com um NSU muito antigo, a consulta retornará unicamente as notas fiscais que tenham sido recepcionadas nos últimos 15 dias.
     '''
     nsu = u'0'

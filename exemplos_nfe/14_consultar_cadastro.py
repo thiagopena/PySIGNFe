@@ -18,7 +18,7 @@ if __name__ == '__main__':
     
     ##Modificar os dados abaixo
     
-    #CPF OU CNPJ OU Inscricao Estadual
+    #CPF ou CNPJ ou Inscricao Estadual
     cnpj = u'99999999000191'
     
     resultados = nova_nfe.consultar_cadastro(cpf_cnpj=cnpj, uf=u'MG', cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False)

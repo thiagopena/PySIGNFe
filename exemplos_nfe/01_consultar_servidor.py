@@ -17,4 +17,5 @@ if __name__ == '__main__':
     
     resultado = nova_nfe.consultar_servidor(cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False, salvar_arquivos=False)
     print('Status: '+str(resultado['status']))
+    print('Motivo Status: '+str(resultado['status_motivo']))
     print('Razao: '+str(resultado['reason']))

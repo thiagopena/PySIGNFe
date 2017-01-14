@@ -26,30 +26,42 @@ if __name__ == '__main__':
     
     nfe = NFe_310()
     
-    #Identificação da nota
-    nfe.infNFe.ide.cUF.valor        = UF_CODIGO['MG']
+    ##Identificação da nota
+    
+    #nfe.infNFe.ide.cUF.valor       = UF_CODIGO['MG']           #Preenchido automaticamente 
     nfe.infNFe.ide.natOp.valor      = 'Venda de produto'
-    nfe.infNFe.ide.tpAmb.valor      = 2
     nfe.infNFe.ide.indPag.valor     = 2  
+    #nfe.infNFe.ide.mod.valor       = '55'                      #Preenchido automaticamente
     nfe.infNFe.ide.serie.valor      = 101    
     nfe.infNFe.ide.nNF.valor        = 27    
-    #nfe.infNFe.ide.dhEmi.valor       = datetime(2016, 10, 14)  
-    nfe.infNFe.ide.dhEmi.valor       = datetime.utcnow()
-    nfe.infNFe.ide.dhSaiEnt.valor    = datetime(2016, 10, 14)
-    nfe.infNFe.ide.tpImp.valor      = 1            
-    nfe.infNFe.ide.tpEmis.valor     = 1            
-    nfe.infNFe.ide.finNFe.valor     = 1            
-    nfe.infNFe.ide.procEmi.valor    = 0            
-    nfe.infNFe.ide.verProc.valor    = 'PySIGNFe'
-    nfe.infNFe.ide.mod.valor        = '55'
+    nfe.infNFe.ide.dhEmi.valor      = datetime.utcnow()
+    nfe.infNFe.ide.dhSaiEnt.valor   = datetime.utcnow()
+    nfe.infNFe.ide.tpNF.valor       = 1                         #1-entrada 2-saida
+    nfe.infNFe.ide.idDest.valor     = 1
     nfe.infNFe.ide.cMunFG.valor     = '3106200'
+    nfe.infNFe.ide.tpImp.valor      = 1
+    #nfe.infNFe.ide.tpEmis.valor    = 1                         #Preenchido automaticamente 
+    #nfe.infNFe.ide.tpAmb.valor     = 2                         #Preenchido automaticamente 
+    nfe.infNFe.ide.finNFe.valor     = 1
+    #nfe.infNFe.ide.indFinal.valor  = 0                         #Preenchido automaticamente
+    nfe.infNFe.ide.indPres.valor    = '1'
+    nfe.infNFe.ide.procEmi.valor    = 0            
+    #nfe.infNFe.ide.verProc.valor   = 'PySIGNFe'                #Preenchido automaticamente
+    
+    ##Contingencia
+    #nfe.infNFe.ide.dhCont.valor    = datetime.utcnow()
+    #nfe.infNFe.ide.xJust.valor     = 'Falha no webservice do Sefaz'
     
     #Identificação do emitente
     nfe.infNFe.emit.CNPJ.valor              = '11111111111111'
+    #nfe.infNFe.emit.CPF.valor              = '11111111111111'
     nfe.infNFe.emit.xNome.valor             = 'RAZAO SOCIAL'        
-    nfe.infNFe.emit.xFant.valor             = 'Nome Fantasia'       #nao obrigatorio
+    nfe.infNFe.emit.xFant.valor             = 'Nome Fantasia'
     nfe.infNFe.emit.CRT.valor               = '1'                   #SIMPLES NACIONAL
     nfe.infNFe.emit.IE.valor                = 'ISENTO'
+    #nfe.infNFe.emit.IM.valor                = '111111111111111'
+    #nfe.infNFe.emit.IEST.valor
+    
     #Endereco emitente
     nfe.infNFe.emit.enderEmit.xLgr.valor    = 'LOGRADOURO (RUA, PRACA, AVENIDA)'
     nfe.infNFe.emit.enderEmit.nro.valor     = '140'
@@ -60,8 +72,8 @@ if __name__ == '__main__':
     nfe.infNFe.emit.enderEmit.UF.valor      = 'MG'
     nfe.infNFe.emit.enderEmit.CEP.valor     = '30390350'
     nfe.infNFe.emit.enderEmit.fone.valor    = '3133333333'
-    nfe.infNFe.emit.enderEmit.cPais.valor     = 1058 
-    nfe.infNFe.emit.enderEmit.xPais.valor     = 'BRASIL'
+    nfe.infNFe.emit.enderEmit.cPais.valor   = 1058 
+    nfe.infNFe.emit.enderEmit.xPais.valor   = 'BRASIL'
     
     
     #Identificação do destinatario
@@ -104,6 +116,7 @@ if __name__ == '__main__':
     det.prod.vFrete.valor   = '0.00'
     det.prod.vSeg.valor     = '0.00'
     det.prod.vDesc.valor    = '0.00'
+    det.prod.vOutro.valor   = '0.00'
     
     #Impostos
     det.imposto.ICMS.regime_tributario = 1      #REGIME TRIBUTARIO: SIMPLES NACIONAL
@@ -140,7 +153,7 @@ if __name__ == '__main__':
     nfe.gera_nova_chave()
     
     #Gera e emite nota fiscal
-    resultados = nova_nfe.processar_nfe(xml_nfe=nfe.xml, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False, consultar_servico=False)
+    resultados = nova_nfe.processar_nota(xml_nfe=nfe.xml, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=True, consumidor=True, consultar_servico=False)
     print("\nResultado:\n")
     '''Retorna um dicionario'''
     for key, value in resultados.items():

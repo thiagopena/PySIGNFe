@@ -26,20 +26,21 @@ if __name__ == '__main__':
     nfe2 = NFe_200()
     
     #Identificação da nota
-    nfe.infNFe.ide.cUF.valor        = UF_CODIGO['MG']
+    
+    #nfe.infNFe.ide.cUF.valor       = UF_CODIGO['MG']           #Preenchido automaticamente 
     nfe.infNFe.ide.natOp.valor      = 'Venda de produto'
-    nfe.infNFe.ide.tpAmb.valor      = 2
     nfe.infNFe.ide.indPag.valor     = 2  
+    #nfe.infNFe.ide.mod.valor       = '55'                      #Preenchido automaticamente
     nfe.infNFe.ide.serie.valor      = 101    
     nfe.infNFe.ide.nNF.valor        = 27
     nfe.infNFe.ide.dEmi.valor       = datetime(2016, 10, 14)
     nfe.infNFe.ide.dSaiEnt.valor    = datetime(2016, 10, 14)
     nfe.infNFe.ide.tpImp.valor      = 1
-    nfe.infNFe.ide.tpEmis.valor     = 1
+    #nfe.infNFe.ide.tpEmis.valor    = 1                         #Preenchido automaticamente 
+    #nfe.infNFe.ide.tpAmb.valor     = 2                         #Preenchido automaticamente 
     nfe.infNFe.ide.finNFe.valor     = 1            
     nfe.infNFe.ide.procEmi.valor    = 0            
-    nfe.infNFe.ide.verProc.valor    = 'PySIGNFe'
-    nfe.infNFe.ide.mod.valor        = '55'
+    #nfe.infNFe.ide.verProc.valor   = 'PySIGNFe'                #Preenchido automaticamente
     nfe.infNFe.ide.cMunFG.valor     = '3106200'
     
     #Identificação do emitente
@@ -149,7 +150,7 @@ if __name__ == '__main__':
     lista_xml_nfe.append(nfe2.xml)
     
     #Gera e emite nota fiscal
-    resultados = nova_nfe.processar_lote(lista_xml_nfe=lista_xml_nfe, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'2.00', ambiente=2, estado=u'MG', tipo_contingencia=False, salvar_arquivos=True)
+    resultados = nova_nfe.processar_lote(lista_xml_nfe=lista_xml_nfe, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'2.00', ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True)
     print("\nResultado:\n")
     '''Retorna um dicionario'''
     for key, value in resultados.items():

@@ -17,6 +17,7 @@ from datetime import datetime
 from pysignfe.nfe.danfe.danferetrato import *
 from pysignfe.nfe.webservices_2 import ESTADO_WS, SVAN, SVRS, UFRS, NFE_AMBIENTE_PRODUCAO
 from pysignfe.nfe.webservices_3 import ESTADO_WS as ESTADO_WS3
+from pysignfe.nfe.webservices_3 import ESTADO_SVC_CONTINGENCIA
 from pysignfe.nfe.webservices_3 import SVAN as SVAN3
 from pysignfe.nfe.webservices_3 import AN
 from pysignfe.nfe.webservices_3 import SVRS as SVRS3
@@ -28,7 +29,7 @@ FILE_DIR = abspath(dirname(__file__))
 class nf_e(NotaFiscal):
 
     def consultar_servidor(self, cert, key, versao=u'3.10', ambiente=2, estado=u'MG',
-                           tipo_contingencia=False, salvar_arquivos=True):
+                           contingencia=False, salvar_arquivos=True):
         """
         Este método verifica se o servidor está em operação
         @param cert: string do certificado digital A1,
@@ -36,7 +37,7 @@ class nf_e(NotaFiscal):
         @param versao: versão da nfe,
         @param ambiente: ambiente da consulta, pode ser 1 para o ambiente de produção e 2 para homologação,
         @param estado: estado em que realizará a consulta do servidor,
-        @param tipo_contingencia : habilita a contigência.
+        @param contingencia : habilita a contigência.
         @param salvar_arquivos: salvar ou nao os arquivos XML gerados.
         @return: Dicionário com o status,envio,resposta e reason.
         """
@@ -47,7 +48,7 @@ class nf_e(NotaFiscal):
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.caminho = u''
         
         processo = p.consultar_servico()
@@ -59,12 +60,13 @@ class nf_e(NotaFiscal):
         return{'status': processo.resposta.cStat.valor, 'status_motivo': processo.resposta.xMotivo.valor, 
                 'envio': processo.envio.xml, 'resposta': processo.resposta.xml, 'reason': processo.resposta.reason}
 
-    def processar_nfe(self, xml_nfe, cert, key, versao=u'3.10', ambiente=2, estado=u'MG',
-                      tipo_contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
+    def processar_nota(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
+                      contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
         """
         Este método realiza o processamento de validação, assinatura e transmissão da nfe.
         @param xml_nfe: xml da nfe (string)
         @param consultar_servico: consulta o status do webservice antes de enviar
+        @param consumidor: True caso NFC-e
         @param n_consultas_recibo: numero de tentativas de consultar o recibo
         @return: Dicionário com a chave_nfe, protocolo, envio, numero_lote, resposta, status_resposta,status_motivo e reason.
         """
@@ -75,7 +77,7 @@ class nf_e(NotaFiscal):
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.caminho = u''
         p.numero_tentativas_consulta_recibo = n_consultas_recibo
         p.verificar_status_servico = consultar_servico
@@ -85,6 +87,13 @@ class nf_e(NotaFiscal):
         else:
             n = NFe_200()
         n.infNFe.xml = xml_nfe
+                
+        n.auto_preencher_campos(ambiente=ambiente, estado=estado, contingencia=contingencia, consumidor=consumidor)
+        
+        if consumidor:
+            n.preencher_campos_nfce()
+        else:
+            n.preencher_campos_nfe()
         
         for processo in p.processar_notas([n]):
             processo.envio.xml
@@ -110,13 +119,13 @@ class nf_e(NotaFiscal):
             vals['status_motivo_'+str(nome)]    = proc.protNFe.infProt.xMotivo.valor
             
         return vals
-
-
-    def processar_lote(self, lista_xml_nfe, cert, key, versao=u'3.10', ambiente=2, estado=u'MG',
-                       tipo_contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
+        
+    def processar_lote(self, lista_xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
+                       contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
         """
         Este método realiza o processamento de validação, assinatura e transmissão da nfe.
         @param lista_xml_nfe:lista nfe(strings ou objetos NFe)
+        @param consumidor: True caso NFC-e
         @param consultar_servico: consulta o status do webservice antes de enviar
         @param n_consultas_recibo: numero de tentativas de consultar o recibo
         @return: Dicionário com o envio,resposta e reason.
@@ -125,7 +134,7 @@ class nf_e(NotaFiscal):
         p.ambiente = ambiente
         p.estado = estado
         p.versao=versao
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
@@ -133,16 +142,23 @@ class nf_e(NotaFiscal):
         p.numero_tentativas_consulta_recibo = n_consultas_recibo
         p.verificar_status_servico = consultar_servico
         
-        if isinstance(lista_xml_nfe[0], basestring):
+        if isinstance(lista_xml_nfe[0], basestring) and lista_xml_nfe:
             lista_nfe = []
-            if lista_xml_nfe:
-                for x in lista_xml_nfe:
-                    if versao == '3.10':
-                        n = NFe_310()
-                    else:
-                        n = NFe_200()
-                    n.infNFe.xml = x
-                    lista_nfe.append(n)
+            for x in lista_xml_nfe:
+                if versao == '3.10':
+                    n = NFe_310()
+                else:
+                    n = NFe_200()
+                n.infNFe.xml = x
+                
+                n.auto_preencher_campos(ambiente=ambiente, estado=estado, contingencia=contingencia, consumidor=consumidor)
+                
+                if consumidor:
+                    n.preencher_campos_nfce()
+                else:
+                    n.preencher_campos_nfe()
+                    
+                lista_nfe.append(n)
         else:
             lista_nfe = lista_xml_nfe
         
@@ -196,7 +212,7 @@ class nf_e(NotaFiscal):
 
 
     def cancelar_nota(self, chave, protocolo, justificativa, cert, key, data=None, versao=u'3.10',
-                      ambiente=2, estado=u'MG', tipo_contingencia=False, salvar_arquivos=True, numero_lote=None):
+                      ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True, numero_lote=None):
         """
         Realiza o cancelamento da nfe.
         @param chave:chave da nfe
@@ -209,7 +225,7 @@ class nf_e(NotaFiscal):
         p.versao = versao
         p.estado = estado
         p.ambiente = ambiente
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
@@ -221,7 +237,7 @@ class nf_e(NotaFiscal):
         return self.montar_vals_evento(processo)
         
     def emitir_carta_correcao(self, chave, texto_correcao, cert, key, sequencia=None, data=None, numero_lote=None,
-                              versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False,
+                              versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False,
                               salvar_arquivos=True):
         """
         @param chave:chave da nfe
@@ -235,7 +251,7 @@ class nf_e(NotaFiscal):
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
                 
         processo = p.corrigir_nota(chave_nfe=chave, texto_correcao=texto_correcao,
                                    ambiente=ambiente,sequencia=sequencia, data=data, numero_lote=numero_lote)
@@ -244,7 +260,7 @@ class nf_e(NotaFiscal):
         return self.montar_vals_evento(processo)
         
     def efetuar_manifesto(self, cnpj, tipo_manifesto, chave,  cert, key, ambiente_nacional=True, versao=u'3.10', ambiente=2,
-                          estado=u'MG', tipo_contingencia=False, justificativa=None, salvar_arquivos=True):
+                          estado=u'MG', contingencia=False, justificativa=None, salvar_arquivos=True):
         """
         Realiza o manifesto do destinatário
         @param tipo_manifesto: Confirmação da Operação, Desconhecimento da Operação, Operação Não Realizada ou Ciência da Emissão
@@ -264,7 +280,7 @@ class nf_e(NotaFiscal):
         p.ambiente = ambiente
         p.certificado.cert_str = cert
         p.certificado.key_str = key
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.salvar_arquivos = salvar_arquivos
         
         processo = p.efetuar_manifesto_destinatario(cnpj=cnpj, tipo_manifesto=tipo_manifesto, chave_nfe=chave, justificativa=justificativa, ambiente_nacional=ambiente_nacional)
@@ -272,7 +288,7 @@ class nf_e(NotaFiscal):
         return self.montar_vals_evento(processo)
         
     def enviar_lote_evento(self, lista_eventos, tipo, cert, key, versao=u'3.10',
-                      ambiente=2, estado=u'MG', tipo_contingencia=False, numero_lote=None, salvar_arquivos=True,
+                      ambiente=2, estado=u'MG', contingencia=False, numero_lote=None, salvar_arquivos=True,
                       ambiente_nacional=False):
         """
         Envia um lote de eventos (cancelamento, correcao, manifestacao ou epec)
@@ -282,7 +298,7 @@ class nf_e(NotaFiscal):
         p.versao = versao
         p.estado = estado
         p.ambiente = ambiente
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
@@ -320,7 +336,7 @@ class nf_e(NotaFiscal):
                 
 
     def inutilizar_nota(self, cnpj, serie, numero, justificativa, cert, key, nfce=False, versao=u'3.10',
-                        ambiente=2, estado=u'MG', tipo_contingencia=False, salvar_arquivos=True):
+                        ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
         """
         Realiza a inutilização do número de uma nota fiscal
         @param cnpj:cnpj do emitente
@@ -337,7 +353,7 @@ class nf_e(NotaFiscal):
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.caminho = u''
         p.nfce = nfce
         
@@ -356,7 +372,7 @@ class nf_e(NotaFiscal):
 
     def inutilizar_faixa_numeracao(self, cnpj, serie, numero_inicial, numero_final, justificativa,
                                    cert, key, nfce=False, versao=u'2.00', ambiente=2, estado=u'MG',
-                                   tipo_contingencia=False, salvar_arquivos=True):
+                                   contingencia=False, salvar_arquivos=True):
         """
         Realiza a inutilização de faixa de numeração de nota fiscal
         @param cnpj:cnpj do emitente
@@ -374,7 +390,7 @@ class nf_e(NotaFiscal):
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.caminho = u''
         p.nfce = nfce
         
@@ -394,7 +410,7 @@ class nf_e(NotaFiscal):
         return vals
 
     def gerar_danfe(self, nfe, retcan_nfe=None, site_emitente=u'', logo=u'',
-                    nome_sistema=u'', leiaute_logo_vertical=False, versao='2.00'):
+                    nome_sistema=u'', leiaute_logo_vertical=False, versao='3.10'):
         """
         Geração do DANFE
         @param nfe:string do xml da NF-e
@@ -521,7 +537,7 @@ class nf_e(NotaFiscal):
         return res
 
     def consultar_nfe(self, chave, cert, key, versao=u'3.10', ambiente=2, estado=u'MG',
-                      tipo_contingencia=False, salvar_arquivos=True):
+                      contingencia=False, salvar_arquivos=True):
         """
         Consultar a situaçao da NF-e
         @param chave:chave da nfe
@@ -533,7 +549,7 @@ class nf_e(NotaFiscal):
         p.ambiente = ambiente
         p.certificado.cert_str = cert
         p.certificado.key_str = key
-        p.tipo_contingencia=tipo_contingencia
+        p.contingencia=contingencia
         p.salvar_arquivos = salvar_arquivos
         processo = p.consultar_nota(chave_nfe=chave)
         
@@ -547,7 +563,7 @@ class nf_e(NotaFiscal):
         return vals
 
     def consultar_cadastro(self, uf, cert, key, cpf_cnpj=None, inscricao_estadual=None, versao=u'2.00',
-                           ambiente=2, estado=u'MG', tipo_contingencia=False, salvar_arquivos=True):
+                           ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
         """
         Consulta cadastro do contribuinte
         @param uf: UF do contribuinte
@@ -585,7 +601,7 @@ class nf_e(NotaFiscal):
         p.ambiente = ambiente
         p.certificado.cert_str = cert
         p.certificado.key_str = key
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.salvar_arquivos = salvar_arquivos
         
         processo = p.consultar_cadastro_contribuinte(cpf_cnpj=cpf_cnpj,
@@ -599,7 +615,7 @@ class nf_e(NotaFiscal):
         return vals
 
     def consultar_nfe_destinatario(self, cnpj, indnfe, indemi, cert, key, nsu='0', versao=u'3.10',
-                                   ambiente=2, estado=u'MG', tipo_contingencia=False, salvar_arquivos=True):
+                                   ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
         """
         Realiza  a consulta do manifesto do destinatário
         @return: Dicionário com o envio,resposta e reason.
@@ -617,7 +633,7 @@ class nf_e(NotaFiscal):
         p.ambiente = ambiente
         p.certificado.cert_str = cert
         p.certificado.key_str = key
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.salvar_arquivos = salvar_arquivos
         processo = p.consultar_notas_destinatario(cnpj=cnpj, indnfe=indnfe, indemi=indemi, nsu=nsu)
         resp = processo.resposta
@@ -683,7 +699,7 @@ class nf_e(NotaFiscal):
         return vals
 
     def download_notas(self, cnpj, lista_chaves,  cert, key, ambiente_nacional=True, versao=u'2.00', ambiente=2, estado=u'MG',
-                     tipo_contingencia=False, salvar_arquivos=True):
+                     contingencia=False, salvar_arquivos=True):
         """
         Realiza download de NFe para uma determinada chave de acesso, para NF-e confirmada pelo destinatario.
         @param lista_chaves: lista de até 10 chaves
@@ -703,7 +719,7 @@ class nf_e(NotaFiscal):
         p.ambiente = ambiente
         p.certificado.cert_str = cert
         p.certificado.key_str = key
-        p.tipo_contingencia = tipo_contingencia
+        p.contingencia = contingencia
         p.salvar_arquivos = salvar_arquivos
         
         processo = p.download_nfes(cnpj, ambiente, lista_chaves=lista_chaves)

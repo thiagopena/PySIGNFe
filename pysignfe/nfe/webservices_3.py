@@ -815,6 +815,69 @@ ESTADO_WS = {
     u'TO': SVRS
 }
 
+#Autorizadores em contingência: 
+#- UF que utilizam a SVC-AN - Sefaz Virtual de Contingência Ambiente Nacional: AC, AL, AP, DF, ES, MG, PB, RJ, RN, RO, RR, RS, SC, SE, SP, TO 
+#- UF que utilizam a SVC-RS - Sefaz Virtual de Contingência Rio Grande do Sul: AM, BA, CE, GO, MA, MS, MT, PA, PE, PI, PR
+
+ESTADO_SVC_CONTINGENCIA = {
+    'AC': 'AN',
+    'AL': 'AN',
+    'AM': 'RS',
+    'AP': 'AN',
+    'BA': 'RS',
+    'CE': 'RS',
+    'DF': 'AN',
+    'ES': 'AN',
+    'GO': 'RS',
+    'MA': 'RS',
+    'MG': 'AN',
+    'MS': 'RS',
+    'MT': 'RS',
+    'PA': 'RS',
+    'PB': 'AN',
+    'PE': 'RS',
+    'PI': 'RS',
+    'PR': 'RS',
+    'RJ': 'AN',
+    'RN': 'AN',
+    'RO': 'AN',
+    'RR': 'AN',
+    'RS': 'AN',
+    'SC': 'AN',
+    'SE': 'AN',
+    'SP': 'AN',
+    'TO': 'AN',
+}
+
+ESTADO_WS_CONTINGENCIA = {
+    'AC': SVC_AN,
+    'AL': SVC_AN,
+    'AM': SVC_RS,
+    'AP': SVC_AN,
+    'BA': SVC_RS,
+    'CE': SVC_RS,
+    'DF': SVC_AN,
+    'ES': SVC_AN,
+    'GO': SVC_RS,
+    'MA': SVC_RS,
+    'MG': SVC_AN,
+    'MS': SVC_RS,
+    'MT': SVC_RS,
+    'PA': SVC_RS,
+    'PB': SVC_AN,
+    'PE': SVC_RS,
+    'PI': SVC_RS,
+    'PR': SVC_RS,
+    'RJ': SVC_AN,
+    'RN': SVC_AN,
+    'RO': SVC_AN,
+    'RR': SVC_AN,
+    'RS': SVC_AN,
+    'SC': SVC_AN,
+    'SE': SVC_AN,
+    'SP': SVC_AN,
+    'TO': SVC_AN,
+}
 
 ##Consulta Chave NFC-e
 CONSULTA_CHAVE_NFCE = {

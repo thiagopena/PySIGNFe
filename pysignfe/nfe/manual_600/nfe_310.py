@@ -8,7 +8,9 @@ import hashlib
 from pysignfe.xml_sped import *
 from pysignfe.nfe.manual_500 import nfe_310
 from pysignfe.nfe.manual_600 import ESQUEMA_ATUAL
-from pysignfe.nfe.webservices_3 import CONSULTA_CHAVE_NFCE, CONSULTA_QRCODE_NFCE
+from pysignfe.nfe.webservices_3 import CONSULTA_CHAVE_NFCE, CONSULTA_QRCODE_NFCE, ESTADO_SVC_CONTINGENCIA
+from pysignfe.nfe.webservices_flags import UF_CODIGO
+from pysignfe import __version__
 
 DIRNAME = os.path.dirname(__file__)
 
@@ -1360,4 +1362,13 @@ class NFe(nfe_310.NFe):
         params_qrcode = url_consulta_qrcode + params_qrcode
                 
         self.infNFeSupl.qrCode.valor = params_qrcode
+    
+    def preencher_campos_nfce(self):
+        self.infNFe.ide.mod.valor = '65'
+        self.infNFe.ide.indFinal.valor = '1'
+        self.infNFe.dest.indIEDest.valor = '9'
+    
+    def preencher_campos_nfe(self):
+        self.infNFe.ide.mod.valor = '55'
+        self.infNFe.ide.indFinal.valor = '0'
         

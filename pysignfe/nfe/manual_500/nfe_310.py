@@ -8,7 +8,6 @@ import hashlib
 from pysignfe.xml_sped import *
 from pysignfe.nfe.manual_401 import nfe_200
 from pysignfe.nfe.manual_500 import ESQUEMA_ATUAL
-from pysignfe.nfe.webservices_3 import CONSULTA_CHAVE_NFCE, CONSULTA_QRCODE_NFCE
 
 DIRNAME = os.path.dirname(__file__)
 
@@ -729,13 +728,18 @@ class Card(XMLNFe):
     # Cartoes de credito = NFC-e.
     def __init__(self):
         super(Card, self).__init__()
-        self.CNPJ = TagCaracter(nome=u'CNPJ',   codigo=u'YA05', tamanho=[0, 14], raiz=u'//card')
-        self.tBand = TagCaracter(nome=u'tBand', codigo=u'YA06', tamanho=[2,2,2], raiz=u'//card')
-        self.cAut = TagCaracter(nome=u'cAut',   codigo=u'YA07', tamanho=[1, 20], decimais=[0, 2, 2], raiz=u'//card')
+        self.CNPJ  = TagCaracter(nome=u'CNPJ',   codigo=u'YA05', tamanho=[0, 14], raiz=u'//card', obrigatorio=False)
+        self.tBand = TagCaracter(nome=u'tBand', codigo=u'YA06', tamanho=[2,2,2], raiz=u'//card', obrigatorio=False)
+        self.cAut  = TagCaracter(nome=u'cAut',   codigo=u'YA07', tamanho=[1, 20], raiz=u'//card', obrigatorio=False)
+        #NT 2015/002
+        self.tpIntegra = TagCaracter(nome=u'tpIntegra',   codigo=u'YA04a', tamanho=[1, 1], raiz=u'//card', obrigatorio=False)
 
     def get_xml(self):
+        if not (self.CNPJ.valor or self.tBand.valor or self.cAut.valor):
+            return ''
         xml = XMLNFe.get_xml(self)
         xml += u'<card>'
+        xml += self.tpIntegra.xml
         xml += self.CNPJ.xml
         xml += self.tBand.xml
         xml += self.cAut.xml
@@ -747,6 +751,7 @@ class Card(XMLNFe):
             self.CNPJ.xml = arquivo
             self.tBand.xml = arquivo
             self.cAut.xml = arquivo
+            self.tpIntegra.xml = arquivo
 
 
     xml = property(get_xml, set_xml)
@@ -1132,13 +1137,13 @@ class Ide(nfe_200.Ide):
         self.mod     = TagInteiro(nome=u'mod'     , codigo=u'B06', tamanho=[ 2,  2, 2], raiz=u'//NFe/infNFe/ide')
         # A tag dEmi nao sera mais utilizada agora sera a dhEmi
         #self.dEmi    = TagData(nome=u'dEmi'       , codigo=u'B09',                      raiz=u'//NFe/infNFe/ide',obrigatorio=False)
-        self.dhEmi    = TagDataHoraUTC(nome=u'dhEmi'       , codigo=u'B09',                      raiz=u'//NFe/infNFe/ide')
-        self.dhSaiEnt  = TagDataHoraUTC(nome=u'dhSaiEnt'       , codigo=u'B10',                      raiz=u'//NFe/infNFe/ide')
-        self.hSaiEnt = TagDataHoraUTC(nome=u'hSaiEnt'    , codigo=u'B10a',                     raiz=u'//NFe/infNFe/ide', obrigatorio=False)
-        self.idDest   = TagInteiro(nome=u'idDest'      , codigo=u'B11a', tamanho=[ 1,  1, 1], raiz=u'//NFe/infNFe/ide', valor=1)
-        self.indFinal = TagCaracter(nome=u'indFinal'   , codigo=u'B25a',                      raiz=u'//NFe/infNFe/ide', valor=u'0')
-        self.indPres  = TagCaracter(nome=u'indPres'    , codigo=u'B25b',                      raiz=u'//NFe/infNFe/ide', valor=u'9')
-        self.dhCont   = TagDataHoraUTC(nome=u'dhCont', codigo=u'B28',                      raiz=u'//NFe/infNFe/ide', obrigatorio=False)
+        self.dhEmi     = TagDataHoraUTC(nome=u'dhEmi'       , codigo=u'B09',                   raiz=u'//NFe/infNFe/ide')
+        self.dhSaiEnt  = TagDataHoraUTC(nome=u'dhSaiEnt'       , codigo=u'B10',                raiz=u'//NFe/infNFe/ide', obrigatorio=False)
+        self.hSaiEnt   = TagDataHoraUTC(nome=u'hSaiEnt'    , codigo=u'B10a',                   raiz=u'//NFe/infNFe/ide', obrigatorio=False)
+        self.idDest    = TagInteiro(nome=u'idDest'      , codigo=u'B11a', tamanho=[ 1,  1, 1], raiz=u'//NFe/infNFe/ide', valor=1)
+        self.indFinal  = TagCaracter(nome=u'indFinal'   , codigo=u'B25a',                      raiz=u'//NFe/infNFe/ide', valor=u'0')
+        self.indPres   = TagCaracter(nome=u'indPres'    , codigo=u'B25b',                      raiz=u'//NFe/infNFe/ide', valor=u'9')
+        self.dhCont    = TagDataHoraUTC(nome=u'dhCont', codigo=u'B28',                         raiz=u'//NFe/infNFe/ide', obrigatorio=False)
 
     def get_xml(self):
         xml = XMLNFe.get_xml(self)

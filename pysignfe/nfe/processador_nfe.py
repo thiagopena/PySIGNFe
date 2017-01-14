@@ -96,7 +96,7 @@ class ProcessadorNFe(object):
         self.certificado = Certificado()
         self.caminho = u''
         self.salvar_arquivos = True
-        self.tipo_contingencia = False
+        self.contingencia = False
         self.nfce = False
         self.danfe = DANFE()
         self.caminho_temporario = u''
@@ -127,18 +127,12 @@ class ProcessadorNFe(object):
             self._soap_retorno.metodo     = webservices_2.METODO_WS[servico]['metodo']
             self._soap_retorno.resposta   = resposta
 
-            if not self.tipo_contingencia:
+            if not self.contingencia:
                 self._servidor = webservices_2.ESTADO_WS[self.estado][ambiente][u'servidor']
                 self._url      = webservices_2.ESTADO_WS[self.estado][ambiente][servico]
-            elif self.tipo_contingencia == 'SCAN':
-                self._servidor = webservices_2.SCAN[ambiente][u'servidor']
-                self._url      = webservices_2.SCAN[ambiente][servico]
-            elif self.tipo_contingencia == 'SVC-AN':
-                self._servidor = webservices_2.SVC_AN[ambiente][u'servidor']
-                self._url      = webservices_2.SVC_AN[ambiente][servico]
-            elif self.tipo_contingencia == 'SVC-RS':
-                self._servidor = webservices_2.SVC_RS[ambiente][u'servidor']
-                self._url      = webservices_2.SVC_RS[ambiente][servico]
+            else:
+                self._servidor = webservices_2.ESTADO_WS_CONTINGENCIA[self.estado][ambiente][u'servidor']
+                self._url      = webservices_2.ESTADO_WS_CONTINGENCIA[self.estado][ambiente][servico]
 
 
         if self.versao == u'3.10':
@@ -153,20 +147,13 @@ class ProcessadorNFe(object):
             self._soap_retorno.metodo     = webservices_3.METODO_WS[servico]['metodo']
             self._soap_retorno.resposta   = resposta
 
-            if not self.tipo_contingencia:
+            if not self.contingencia:
                 self._servidor = webservices_3.ESTADO_WS[self.estado][ambiente][u'servidor']
                 self._url      = webservices_3.ESTADO_WS[self.estado][ambiente][servico]
-            elif self.tipo_contingencia == 'SCAN':
-                self._servidor = webservices_3.SCAN[ambiente][u'servidor']
-                self._url      = webservices_3.SCAN[ambiente][servico]
-            elif self.tipo_contingencia == 'SVC-AN':
-                self._servidor = webservices_3.SVC_AN[ambiente][u'servidor']
-                self._url      = webservices_3.SVC_AN[ambiente][servico]
-            elif self.tipo_contingencia == 'SVC-RS':
-                self._servidor = webservices_3.SVC_RS[ambiente][u'servidor']
-                self._url      = webservices_3.SVC_RS[ambiente][servico]
-
-        #try:
+            else:
+                self._servidor = webservices_3.ESTADO_WS_CONTINGENCIA[self.estado][ambiente][u'servidor']
+                self._url      = webservices_3.ESTADO_WS_CONTINGENCIA[self.estado][ambiente][servico]
+            
         self.certificado.prepara_certificado_arquivo_pfx()
 
         #
@@ -201,7 +188,6 @@ class ProcessadorNFe(object):
         # apenas o uso do certificado para validar a identidade, independente
         # da existência de assinatura digital
         #
-
         os.remove(nome_arq_chave)
         os.remove(nome_arq_certificado)
 
@@ -220,9 +206,6 @@ class ProcessadorNFe(object):
             #print (15*'==')
             #print (self._soap_retorno.xml)
             #print (15*'==')
-        #except Exception, e:
-            #raise e
-        #else:
         con.close()
 
     def enviar_lote(self, numero_lote=None, lista_nfes=[]):
@@ -248,9 +231,6 @@ class ProcessadorNFe(object):
             nfe.validar()
 
         envio.NFe = lista_nfes
-
-        #if numero_lote is None:
-        #    numero_lote = datetime.now().strftime('%Y%m%d%H%M%S')
 
         envio.idLote.valor = numero_lote
         envio.validar()

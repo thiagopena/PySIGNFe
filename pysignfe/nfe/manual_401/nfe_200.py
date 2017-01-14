@@ -8,6 +8,10 @@ from pysignfe.nfe.manual_300 import nfe_110
 import os
 from lxml.etree import tounicode
 
+from pysignfe.nfe.webservices_3 import ESTADO_SVC_CONTINGENCIA
+from pysignfe.nfe.webservices_flags import UF_CODIGO
+from pysignfe import __version__
+
 DIRNAME = os.path.dirname(__file__)
 
 
@@ -1800,3 +1804,44 @@ class NFe(nfe_110.NFe):
         chave += unicode(self.infNFe.ide.cDV.valor).strip().rjust(1, u'0')
         
         self.chave = chave
+        
+    def preencher_campos_nfce(self):
+        self.infNFe.ide.mod.valor = '65'
+        #self.infNFe.ide.indFinal.valor = '1'
+        #self.infNFe.dest.indIEDest.valor = '9'
+        
+    def preencher_campos_nfe(self):
+        self.infNFe.ide.mod.valor = '55'
+        #self.infNFe.ide.indFinal.valor = '0'
+        
+    def auto_preencher_campos(self, ambiente, estado, contingencia, consumidor):
+        self.infNFe.ide.tpAmb.valor   = ambiente
+        self.infNFe.ide.cUF.valor     = UF_CODIGO[estado]
+        self.infNFe.ide.verProc.valor = __version__
+        
+        if self.infNFe.versao.valor=='3.10':
+            if not self.infNFe.ide.dhEmi.valor:
+                self.infNFe.ide.dhEmi.valor = datetime.utcnow()
+                
+        ##Preencher automaticamente tpEmis
+        if contingencia:
+            if ESTADO_SVC_CONTINGENCIA[estado] == 'AN':
+                self.infNFe.ide.tpEmis.valor = 6
+            elif ESTADO_SVC_CONTINGENCIA[estado] == 'RS':
+                self.infNFe.ide.tpEmis.valor = 7
+        else:
+            self.infNFe.ide.tpEmis.valor = 1
+            
+    def calcula_total_nfe(self):
+        vnfe = self.infNFe.total.ICMSTot.vProd.valor
+        vnfe -= self.infNFe.total.ICMSTot.vDesc.valor
+        vnfe -= self.infNFe.total.ICMSTot.vICMSDeson.valor
+        vnfe += self.infNFe.total.ICMSTot.vST.valor
+        vnfe += self.infNFe.total.ICMSTot.vFrete.valor
+        vnfe += self.infNFe.total.ICMSTot.vSeg.valor
+        vnfe += self.infNFe.total.ICMSTot.vOutro.valor
+        vnfe += self.infNFe.total.ICMSTot.vII.valor
+        vnfe += self.infNFe.total.ICMSTot.vIPI.valor
+        vnfe += self.infNFe.total.ISSQNTot.vServ.valor
+        
+        self.infNFe.total.ICMSTot.vNF.valor = vnfe

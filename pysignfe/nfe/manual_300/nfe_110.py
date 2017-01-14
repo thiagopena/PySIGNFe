@@ -2570,7 +2570,7 @@ class RefNF(XMLNFe):
         self.cUF   = TagInteiro(nome=u'cUF'  , codigo=u'B15', tamanho=[ 2,  2, 2], raiz=u'//NFref/refNF')
         self.AAMM  = TagCaracter(nome=u'AAMM', codigo=u'B16', tamanho=[ 4,  4, 4], raiz=u'//NFref/refNF')
         self.CNPJ  = TagCaracter(nome=u'CNPJ', codigo=u'B17', tamanho=[14, 14]   , raiz=u'//NFref/refNF')
-        self.mod   = TagCaracter(nome=u'mod' , codigo=u'B18', tamanho=[ 2,  2, 2], raiz=u'//NFref/refNF')
+        self.mod   = TagCaracter(nome=u'mod' , codigo=u'B18', tamanho=[ 2,  2, 2], raiz=u'//NFref/refNF', valor='01')
         self.serie = TagInteiro(nome=u'serie', codigo=u'B19', tamanho=[ 1,  3, 1], raiz=u'//NFref/refNF')
         self.nNF   = TagInteiro(nome=u'nNF'  , codigo=u'B20', tamanho=[ 1,  9, 1], raiz=u'//NFref/refNF')
 
@@ -3179,31 +3179,29 @@ class NFe(XMLNFe):
         return locale.format('%d', qtd, 1)
     
     def valor_total_nota(self):
-        v_prods = self.infNFe.total.ICMSTot.vProd.valor
-        v_servs = self.infNFe.total.ISSQNTot.vServ.valor
-        total = v_prods + v_servs
-        return locale.format(u'%.2f', total, 1)
+        tot = self.infNFe.total.ICMSTot.vProd.valor
+        tot += self.infNFe.total.ISSQNTot.vServ.valor
+        return locale.format(u'%.2f', tot, 1)
     
     def total_acrescimos(self):
-        v_frete = self.infNFe.total.ICMSTot.vFrete.valor
-        v_seg   = self.infNFe.total.ICMSTot.vSeg.valor
-        v_outro = self.infNFe.total.ICMSTot.vOutro.valor
-        total_acrescimo = v_frete + v_seg + v_outro
-        return locale.format(u'%.2f', total_acrescimo, 1)
+        tot = self.infNFe.total.ICMSTot.vFrete.valor
+        tot += self.infNFe.total.ICMSTot.vSeg.valor
+        tot += self.infNFe.total.ICMSTot.vOutro.valor
+        return locale.format(u'%.2f', tot, 1)
      
     def total_desconto(self):
         v_desc = self.infNFe.total.ICMSTot.vDesc.valor
         return locale.format(u'%.2f', v_desc, 1)
         
     def valor_a_pagar(self):
-        v_prods = self.infNFe.total.ICMSTot.vProd.valor
-        v_servs = self.infNFe.total.ISSQNTot.vServ.valor
-        v_frete = self.infNFe.total.ICMSTot.vFrete.valor
-        v_seg   = self.infNFe.total.ICMSTot.vSeg.valor
-        v_outro = self.infNFe.total.ICMSTot.vOutro.valor
-        v_desc  = self.infNFe.total.ICMSTot.vDesc.valor
-        total_a_pagar = v_prods + v_servs + v_frete + v_seg + v_outro - v_desc
+        total_a_pagar = self.infNFe.total.ICMSTot.vProd.valor
+        total_a_pagar += self.infNFe.total.ISSQNTot.vServ.valor
+        total_a_pagar += self.infNFe.total.ICMSTot.vFrete.valor
+        total_a_pagar += self.infNFe.total.ICMSTot.vSeg.valor
+        total_a_pagar += self.infNFe.total.ICMSTot.vOutro.valor
+        total_a_pagar -= self.infNFe.total.ICMSTot.vDesc.valor
         return total_a_pagar
         
     def valor_a_pagar_formatado(self):
         return locale.format(u'%.2f', self.valor_a_pagar(), 1)
+

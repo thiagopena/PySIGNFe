@@ -27,7 +27,7 @@ class Signature(XMLNFe):
 
         if self.URI[0] != u'#':
             self.URI = u'#' + self.URI
-        '''    
+        
         xml  = u'<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">'
         xml +=     u'<SignedInfo>'
         xml +=         u'<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />'
@@ -48,15 +48,15 @@ class Signature(XMLNFe):
         xml +=         u'</X509Data>'
         xml +=     u'</KeyInfo>'
         xml += u'</Signature>'
-        '''
         
-        xml = self.signature_tag
+        
+        #xml = self.signature_tag
         
         return xml
 
     def set_xml(self, arquivo):
         if self._le_xml(arquivo):
-            self.signature_tag = arquivo
+            #self.signature_tag = arquivo
             self.URI = self._le_tag(u'//sig:Signature/sig:SignedInfo/sig:Reference', u'URI') or u''
             self.DigestValue = self._le_tag(u'//sig:Signature/sig:SignedInfo/sig:Reference/sig:DigestValue') or u''
             self.SignatureValue = self._le_tag(u'//sig:Signature/sig:SignatureValue') or u''

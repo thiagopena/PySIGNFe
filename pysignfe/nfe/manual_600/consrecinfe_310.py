@@ -93,7 +93,7 @@ class ProtNFe(consrecinfe_310.ProtNFe):
     def data_autorizacao_nfce(self):
         if not self.infProt.nProt.valor:
             return u''
-        return u'Data de autorização: '+ self.infProt.dhRecbto.formato_danfe_nfce()
+        return u'Data de autorização: '+ self.infProt.dhRecbto.formato_danfe()
         
 
 class RetConsReciNFe(consrecinfe_310.RetConsReciNFe):

@@ -117,7 +117,12 @@ class nf_e(NotaFiscal):
             vals['status_resposta_'+str(nome)]  = proc.protNFe.infProt.cStat.valor
             vals['numero_protocolo_'+str(nome)] = proc.protNFe.infProt.nProt.valor
             vals['status_motivo_'+str(nome)]    = proc.protNFe.infProt.xMotivo.valor
-            
+            if salvar_arquivos and proc.protNFe.infProt.nProt.valor:
+                if consumidor:
+                    self.gerar_danfce(proc_nfce=proc.xml, salvar_arquivo=True)
+                else:
+                    self.gerar_danfe(proc_nfe=proc.xml, salvar_arquivo=True)
+                        
         return vals
         
     def processar_lote(self, lista_xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
@@ -179,6 +184,11 @@ class nf_e(NotaFiscal):
             vals['status_resposta_'+str(nome)]  = proc.protNFe.infProt.cStat.valor
             vals['numero_protocolo_'+str(nome)] = proc.protNFe.infProt.nProt.valor
             vals['status_motivo_'+str(nome)]    = proc.protNFe.infProt.xMotivo.valor
+            if salvar_arquivos and proc.protNFe.infProt.nProt.valor:
+                if consumidor:
+                    self.gerar_danfce(proc_nfce=proc.xml, salvar_arquivo=True)
+                else:
+                    self.gerar_danfe(proc_nfe=proc.xml, salvar_arquivo=True)
 
         return vals
                 
@@ -308,7 +318,7 @@ class nf_e(NotaFiscal):
             if ambiente_nacional:
                 ev.infEvento.cOrgao.valor = UF_CODIGO['NACIONAL']
             else:
-                ev.infEvento.cOrgao.valor = UF_CODIGO[self.estado]
+                ev.infEvento.cOrgao.valor = UF_CODIGO[estado]
                 
             ev.infEvento.CNPJ.valor = ev.infEvento.CNPJ.valor or ev.infEvento.chNFe.valor[6:20] # Extrai o CNPJ da própria chave da NF-e
             ev.infEvento.dhEvento.valor = ev.infEvento.dhEvento.valor or datetime.now()
@@ -409,36 +419,32 @@ class nf_e(NotaFiscal):
 
         return vals
 
-    def gerar_danfe(self, nfe, retcan_nfe=None, site_emitente=u'', logo=u'',
-                    nome_sistema=u'', leiaute_logo_vertical=False, versao='3.10'):
+    def gerar_danfe(self, proc_nfe, retcan_nfe=None, site_emitente=u'', logo=u'',
+                    nome_sistema=u'', leiaute_logo_vertical=False, versao='3.10', salvar_arquivo=False):
         """
         Geração do DANFE
-        @param nfe:string do xml da NF-e
+        @param nfe: string da NF-e processada ou objeto ProcNFe_310
         @param site_emitente: Endereço do site do emitente
         @param logo: O caminho para a imagem ou  Instância da imagem.
         @param leiaute_logo_vertical: possibilita que a logomarca tenha a orientação vertical
         @return: String
         """
         d = DANFE()
-        if versao == '3.10':
-            nota = NFe_310()
-            protNFe = ProtNFe_310()
-            proc = ProcNFe_310()
+        if isinstance(proc_nfe, basestring):
+            if versao == '3.10':
+                proc = ProcNFe_310()
+            else:
+                proc = ProcNFe_200()
+                
+            proc.xml = proc_nfe
+            
         else:
-            nota = NFe_200()
-            protNFe = ProtNFe_200()
-            proc = ProcNFe_200()
-        nota.xml = nfe
-        resp = minidom.parseString(nfe.encode('utf-8'))
-        resp = resp.getElementsByTagName("protNFe")[0]
-        resposta = resp.toxml()
-        protNFe.xml = resposta
-        proc.protNFe = protNFe
-
-        d.NFe = nota
-        d.protNFe = protNFe
+            proc = proc_nfe
+            
+        d.NFe = proc.NFe
+        d.protNFe = proc.protNFe
         d.versao = versao
-        d.salvar_arquivo = False
+        d.salvar_arquivo = salvar_arquivo
         d.obs_impressao = u'DANFE gerado em %(now:%d/%m/%Y, %H:%M:%S)s'
         d.nome_sistema = nome_sistema
         d.site = site_emitente
@@ -449,13 +455,14 @@ class nf_e(NotaFiscal):
         d.danfe.generate_by(PDFGenerator, filename=danfe_pdf)
         d.danfe = danfe_pdf.getvalue()
         danfe_pdf.close()
-
+        
         return d.danfe
     
-    def gerar_danfce(self, nfce, csc, imprime_produtos=True, imprime_id_consumidor=True, imprime_ender_consumidor=True, via_estabelecimento=False, cidtoken='000001', nversao='100', versao='2.00'):
+    def gerar_danfce(self, proc_nfce, csc='', imprime_produtos=True, imprime_id_consumidor=True, imprime_ender_consumidor=True, via_estabelecimento=False, 
+                    cidtoken='000001', nversao='100', versao='3.10', salvar_arquivo=False):
         '''
         Gerar DANFCE
-        @param nfce: string da NFC-e processada
+        @param nfce: string da NFC-e processada ou objeto ProcNFe_310
         @param csc: Codigo de Segurança do Contribuinte
         @param imprime_produtos: imprime os produtos e seus dados na DANFE
         @param imprime_id_consumidor: imprime dados do consumidor na DANFE
@@ -464,30 +471,32 @@ class nf_e(NotaFiscal):
         @param cidtoken: identificador do csc
         '''
         d = DANFE()
-        if versao == '3.10':
-            nota = NFe_310()
-            protNFe = ProtNFe_310()
-            proc = ProcNFe_310()
+        if isinstance(proc_nfce, basestring):
+            if versao == '3.10':
+                proc = ProcNFe_310()
+            else:
+                raise ValueError("Geracao de DANFCE apenas valido com versao 3.10")
+                
+            proc.xml = proc_nfce
+            proc.NFe.infNFeSupl.csc = csc
+            proc.NFe.infNFeSupl.cidtoken = cidtoken
+            proc.NFe.infNFeSupl.nversao = nversao
+            
         else:
-            nota = NFe_200()
-            protNFe = ProtNFe_200()
-            proc = ProcNFe_200()
-        nota.xml = nfce
-        resp = minidom.parseString(nfce.encode('utf-8'))
-        resp = resp.getElementsByTagName("protNFe")[0]
-        resposta = resp.toxml()
-        protNFe.xml = resposta
-        proc.protNFe = protNFe
+            proc = proc_nfce
+            
+        if not proc.NFe.infNFeSupl.csc:
+            raise ValueError("Informar Código de Segurança do Contribuinte (CSC)")
         
-        d.NFe = nota
-        d.protNFe = protNFe
+        d.NFe = proc.NFe
+        d.protNFe = proc.protNFe
         d.versao = versao
         d.salvar_arquivo = False
         d.imprime_produtos_nfce = imprime_produtos
         d.imprime_id_consumidor = imprime_id_consumidor
         d.imprime_ender_consumidor = imprime_ender_consumidor
-        d.obs_impressao = u'DANFE gerado em %(now:%d/%m/%Y, %H:%M:%S)s'
-        d.gerar_danfce(csc=csc, via_estabelecimento=via_estabelecimento, cidtoken=cidtoken, nversao=nversao)
+        d.obs_impressao = u'DANFCE gerado em %(now:%d/%m/%Y, %H:%M:%S)s'
+        d.gerar_danfce(via_estabelecimento=via_estabelecimento)
         danfe_pdf = io.BytesIO()
         d.danfe.generate_by(PDFGenerator, filename=danfe_pdf)
         d.danfe = danfe_pdf.getvalue()
@@ -562,11 +571,10 @@ class nf_e(NotaFiscal):
         
         return vals
 
-    def consultar_cadastro(self, uf, cert, key, cpf_cnpj=None, inscricao_estadual=None, versao=u'2.00',
+    def consultar_cadastro(self, cert, key, cpf_cnpj=None, inscricao_estadual=None, versao=u'2.00',
                            ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
         """
         Consulta cadastro do contribuinte
-        @param uf: UF do contribuinte
         @param cpf_cnpj: CPF ou CNPJ do contribuinte
         @param inscricao_estadual: IE do contribuinte
         @return: Dicionário com o envio,resposta e reason.
@@ -577,20 +585,20 @@ class nf_e(NotaFiscal):
         p = ProcessadorNFe()
         p.versao = versao
         p.estado = estado
-        if uf in ('AC', 'AL', 'AP', 'DF', 'ES', 'PB', 'RJ', 'RN', 'RO', 'RR', 'SC',
+        if estado in ('AC', 'AL', 'AP', 'DF', 'ES', 'PB', 'RJ', 'RN', 'RO', 'RR', 'SC',
                   'SE', 'TO'):
             #SVRS[NFE_AMBIENTE_PRODUCAO][u'servidor'] = u'svp-ws.sefazvirtual.rs.gov.br'
             if versao == '3.10':
                 SVRS3[NFE_AMBIENTE_PRODUCAO][u'servidor'] = u'cad.svrs.rs.gov.br'
             else:
                 SVRS[NFE_AMBIENTE_PRODUCAO][u'servidor'] = u'cad.svrs.rs.gov.br'
-        if uf == 'RS':
+        if estado == 'RS':
             #UFRS[NFE_AMBIENTE_PRODUCAO][u'servidor'] = u'sef.sefaz.rs.gov.br'
             if versao == '3.10':
                 UFRS3[NFE_AMBIENTE_PRODUCAO][u'servidor'] = u'cad.sefazrs.rs.gov.br'
             else:
                 UFRS[NFE_AMBIENTE_PRODUCAO][u'servidor'] = u'cad.sefazrs.rs.gov.br'
-        if uf == 'MA':
+        if estado == 'MA':
             if versao == '3.10':
                 SVAN3[NFE_AMBIENTE_PRODUCAO][u'servidor'] = u'sistemas.sefaz.ma.gov.br'
                 SVAN3[NFE_AMBIENTE_PRODUCAO][WS_NFE_CONSULTA_CADASTRO] = u'wscadastro/CadConsultaCadastro2'
@@ -605,7 +613,7 @@ class nf_e(NotaFiscal):
         p.salvar_arquivos = salvar_arquivos
         
         processo = p.consultar_cadastro_contribuinte(cpf_cnpj=cpf_cnpj,
-                                                     inscricao_estadual=inscricao_estadual, uf=uf,
+                                                     inscricao_estadual=inscricao_estadual,
                                                      ambiente=ambiente)
         vals = {'envio': processo.envio.xml,
                 'resposta': processo.resposta.xml,
@@ -713,9 +721,11 @@ class nf_e(NotaFiscal):
         p.estado = estado
         if ambiente_nacional:
             if versao == '3.10':
-                ESTADO_WS3[estado] = SVAN3
+                #ESTADO_WS3[estado] = SVAN3
+                ESTADO_WS3[estado] = AN
             else:
-                ESTADO_WS[estado] = SVAN
+                #ESTADO_WS[estado] = SVAN
+                ESTADO_WS[estado] = AN
         p.ambiente = ambiente
         p.certificado.cert_str = cert
         p.certificado.key_str = key

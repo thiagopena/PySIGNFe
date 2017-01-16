@@ -620,24 +620,42 @@ class TagDataHoraUTC(TagData):
             valor = self._brasilia.normalize(self._valor_data).strftime('%d/%m/%Y %H:%M:%S %Z (%z)')
             #
             # Troca as siglas:
-            # BRT - Brazilian Time -> HOB - Horário Oficial do Brasil
-            # BRST - Brazilian Summer Time -> HVOB - Horário de Verão Oficial do Brasil
+            # BRT - Brasília Time -> HOB - Horário Oficial de Brasília
+            # BRST - Brasília Summer Time -> HVOB - Horário de Verão Oficial de Brasília
+            # AMT - Amazon Time -> HOA - Horário Oficial da Amazônia
+            # AMST - Amazon Summer Time -> HVOA - Horário de Verão Oficial da Amazônia
+            # FNT - Fernando de Noronha Time -> HOFN - Horário Oficial de Fernando de Noronha
             #
+            '''
             valor = valor.replace('(-0100)', '(-01:00)')
             valor = valor.replace('(-0200)', '(-02:00)')
             valor = valor.replace('(-0300)', '(-03:00)')
             valor = valor.replace('(-0400)', '(-04:00)')
             valor = valor.replace('BRT', 'HOB')
             valor = valor.replace('BRST', 'HVOB')
+            valor = valor.replace('AMT', 'HOA')
+            valor = valor.replace('AMST', 'HVOA')
+            valor = valor.replace('FNT', 'HOFN')
+            '''
+            ##Manter apenas horario local
+            valor = valor.replace('(-0100)', '')
+            valor = valor.replace('(-0200)', '')
+            valor = valor.replace('(-0300)', '')
+            valor = valor.replace('(-0400)', '')
+            valor = valor.replace('BRT', '')
+            valor = valor.replace('BRST', '')
+            valor = valor.replace('AMT', '')
+            valor = valor.replace('AMST', '')
+            valor = valor.replace('FNT', '')
             return valor
             
-    def formato_danfe_nfce(self):
+    #def formato_danfe_nfce(self):
         ##Converter UTC para horario local
-        if self._valor_data is None:
-            return ''
-        localdt = self._valor_data.replace(tzinfo=pytz.utc).astimezone(self.tzsistema)
-        localdt_str = self.tzsistema.normalize(localdt).strftime('%d/%m/%Y %H:%M:%S')
-        return localdt_str
+    #    if self._valor_data is None:
+    #        return ''
+    #    localdt = self._valor_data.replace(tzinfo=pytz.utc).astimezone(self.tzsistema)
+    #    localdt_str = self.tzsistema.normalize(localdt).strftime('%d/%m/%Y %H:%M:%S')
+    #    return localdt_str
 
 
 class TagInteiro(TagCaracter):

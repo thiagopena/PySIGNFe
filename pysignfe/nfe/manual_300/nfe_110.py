@@ -2804,12 +2804,12 @@ class NFe(XMLNFe):
         xml += ABERTURA
         xml += u'<NFe xmlns="http://www.portalfiscal.inf.br/nfe">'
         xml += self.infNFe.xml
-
+        
         #
         # Define a URI a ser assinada
         #
         self.Signature.URI = u'#' + self.infNFe.Id.valor
-
+        
         xml += self.Signature.xml
         xml += u'</NFe>'
         return xml
@@ -2818,6 +2818,7 @@ class NFe(XMLNFe):
         if self._le_xml(arquivo):
             self.infNFe.xml    = arquivo
             self.Signature.xml = self._le_noh('//NFe/sig:Signature')
+            #self.Signature.xml = arquivo
 
     xml = property(get_xml, set_xml)
 

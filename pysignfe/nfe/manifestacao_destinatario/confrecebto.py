@@ -142,6 +142,10 @@ class RetEnvEventoConfRecebimento(RetEnvEvento):
             self.xMotivo.xml = arquivo
             self.retEvento = self.le_grupo('//retEnvEvento/retEvento', RetEventoConfRecebimento)
             
+            # Monta o dicion?rio dos retornos
+            for ret in self.retEvento:
+                self.dic_retEvento[ret.infEvento.chNFe.valor] = ret
+            
     xml = property(get_xml, set_xml)
 
 

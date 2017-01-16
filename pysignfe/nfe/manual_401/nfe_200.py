@@ -1791,7 +1791,8 @@ class NFe(nfe_110.NFe):
         chave = unicode(self.infNFe.ide.cUF.valor).strip().rjust(2, u'0')
         chave += unicode(self.infNFe.ide.dEmi.valor.strftime(u'%y%m')).strip().rjust(4, u'0')
         chave += unicode(self.infNFe.emit.CNPJ.valor).strip().rjust(14, u'0')
-        chave += u'55'
+        #chave += u'55'
+        chave += unicode(self.infNFe.ide.mod.valor)
         chave += unicode(self.infNFe.ide.serie.valor).strip().rjust(3, u'0')
         chave += unicode(self.infNFe.ide.nNF.valor).strip().rjust(9, u'0')
 

@@ -1156,7 +1156,10 @@ class Ide(nfe_200.Ide):
         xml += self.serie.xml
         xml += self.nNF.xml
         xml += self.dhEmi.xml
-        xml += self.dhSaiEnt.xml
+        
+        if self.mod.valor == '55':
+            xml += self.dhSaiEnt.xml
+        
         xml += self.tpNF.xml
         xml += self.idDest.xml
         xml += self.cMunFG.xml
@@ -1392,7 +1395,8 @@ class NFe(nfe_200.NFe):
         chave = unicode(self.infNFe.ide.cUF.valor).strip().rjust(2, u'0')
         chave += unicode(self.infNFe.ide.dhEmi.valor.strftime(u'%y%m')).strip().rjust(4, u'0')
         chave += unicode(self.infNFe.emit.CNPJ.valor).strip().rjust(14, u'0')
-        chave += u'55'
+        #chave += u'55'
+        chave += unicode(self.infNFe.ide.mod.valor)
         chave += unicode(self.infNFe.ide.serie.valor).strip().rjust(3, u'0')
         chave += unicode(self.infNFe.ide.nNF.valor).strip().rjust(9, u'0')
 
@@ -1473,7 +1477,7 @@ class NFe(nfe_200.NFe):
         return id_nota
     
     def data_emissao_danfe_nfce(self):
-        data_emissao = u' Data emissão: ' + self.infNFe.ide.dhEmi.formato_danfe_nfce()
+        data_emissao = u' Data emissão: ' + self.infNFe.ide.dhEmi.formato_danfe()
         if not self.via_estabelecimento:
             data_emissao += u' - Via do Consumidor'
         else:

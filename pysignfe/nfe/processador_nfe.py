@@ -176,6 +176,7 @@ class ProcessadorNFe(object):
         arq_tmp.close()
         
         print("  servidor: ", self._servidor)
+        print("  url: ", self._url)
         con = HTTPSConnection(self._servidor, key_file=nome_arq_chave, cert_file=nome_arq_certificado)
         #con = ConexaoHTTPS(self._servidor, key_file=nome_arq_chave, cert_file=nome_arq_certificado)
         con.request(u'POST', u'/' + self._url, self._soap_envio.xml.encode(u'utf-8'), self._soap_envio.header)
@@ -198,14 +199,13 @@ class ProcessadorNFe(object):
         self._soap_retorno.resposta.reason   = unicode(resp.reason)
         self._soap_retorno.resposta.msg      = resp.msg
         self._soap_retorno.resposta.original = unicode(resp.read().decode('utf-8'))
-        #print ('servidor:', self._servidor)
-        #print ('STATUS__-', self._soap_retorno.resposta.original)
+        print ('STATUS__-', self._soap_retorno.resposta.original)
         # Tudo certo!
         if self._soap_retorno.resposta.status == 200:
             self._soap_retorno.xml = self._soap_retorno.resposta.original
-            #print (15*'==')
-            #print (self._soap_retorno.xml)
-            #print (15*'==')
+            print (15*'==')
+            print (self._soap_retorno.xml)
+            print (15*'==')
         con.close()
 
     def enviar_lote(self, numero_lote=None, lista_nfes=[]):
@@ -303,7 +303,10 @@ class ProcessadorNFe(object):
             novos_arquivos.append((novo_arquivo_nome, novo_arquivo))
             
             caminho_original = self.caminho
-            self.caminho = self.monta_caminho_nfe(ambiente=ambiente, chave_nfe=resposta.protNFe[0].infProt.chNFe.valor, dir='Recibos')
+            if len(resposta.protNFe):
+                self.caminho = self.monta_caminho_nfe(ambiente=ambiente, chave_nfe=resposta.protNFe[0].infProt.chNFe.valor, dir='Recibos')
+            else:
+                self.caminho = self.monta_caminho_nfe(ambiente=ambiente, dir='Recibos', data=datetime.now().strftime('%Y-%m'))
             self.salvar_novos_arquivos(novos_arquivos=novos_arquivos)
             self.caminho = caminho_original
             
@@ -440,7 +443,7 @@ class ProcessadorNFe(object):
 
         return processo
 
-    def consultar_cadastro_contribuinte(self, cpf_cnpj=None, inscricao_estadual=None, uf=None, ambiente=None):
+    def consultar_cadastro_contribuinte(self, cpf_cnpj=None, inscricao_estadual=None, ambiente=None):
         novos_arquivos = []
         if self.versao == u'2.00':
             envio = ConsCad_200()
@@ -453,9 +456,8 @@ class ProcessadorNFe(object):
 
         if ambiente is None:
             ambiente = self.ambiente
-        if not uf:
-            uf = self.estado
-        envio.infCons.UF.valor = uf
+            
+        envio.infCons.UF.valor = self.estado
 
         if inscricao_estadual:
             envio.infCons.IE.valor = inscricao_estadual
@@ -527,7 +529,6 @@ class ProcessadorNFe(object):
                 
         envio.validar()
         
-        ##Diretorio sera a chave da primeira NFe da lista de eventos.
         ambiente = lista_eventos[0].infEvento.tpAmb.valor or self.ambiente
         self.caminho = self.monta_caminho_nfe(ambiente=ambiente, chave_nfe=lista_eventos[0].infEvento.chNFe.valor, dir=dir)
         
@@ -552,7 +553,7 @@ class ProcessadorNFe(object):
             
             self.montar_processo_lista_eventos(lista_eventos, processo.resposta.dic_retEvento, processo.resposta.dic_procEvento, classe_evento)
             
-            self.salvar_processamento_eventos(ret_eventos=resposta.retEvento, tipo_evento=tipo_evento)
+            self.salvar_processamento_eventos(processo=processo, ret_eventos=resposta.retEvento, tipo_evento=tipo_evento)
             
             self.salvar_novos_arquivos(novos_arquivos=novos_arquivos)
             
@@ -946,18 +947,20 @@ class ProcessadorNFe(object):
             self.salvar_novos_arquivos(novos_arquivos=novos_arquivos)
             
             self.caminho = caminho_original
-                
+            
         return processo
 
-    def monta_caminho_nfe(self, ambiente, chave_nfe, dir=''):
+    def monta_caminho_nfe(self, ambiente, chave_nfe=None, dir='', data=None):
         caminho = self.caminho + u'ArquivosXML/NFe/'
 
         if ambiente == 1:
             caminho = os.path.join(caminho, 'producao/')
         else:
             caminho = os.path.join(caminho, 'homologacao/')
-
-        data = u'20' + chave_nfe[2:4] + u'-' + chave_nfe[4:6]
+        
+        if not data:
+            data = u'20' + chave_nfe[2:4] + u'-' + chave_nfe[4:6]
+            
         if dir:
             caminho = os.path.join(caminho, data + u'/' + dir + u'/')
         else:
@@ -1026,7 +1029,7 @@ class ProcessadorNFe(object):
                 arquivo_em_disco.write(conteudo)
             arquivo_em_disco.close()
     
-    def salvar_processamento_eventos(self, ret_eventos, tipo_evento):
+    def salvar_processamento_eventos(self, processo, ret_eventos, tipo_evento):
 
         for ret in ret_eventos:
             novos_arquivos = []
@@ -1268,10 +1271,11 @@ class DANFE(object):
                 self.danfe.remetente.monta_quadro_emitente(self.danfe.remetente.dados_emitente_logo_horizontal(self.logo))
 
         if self.salvar_arquivo:
+            self.caminho = self.monta_caminho_danfe(ambiente=self.NFe.infNFe.ide.tpAmb.valor, chave_nfe=self.NFe.chave, dir='DANFE')
             nome_arq = self.caminho + self.NFe.chave + u'.pdf'
             type(self.danfe.generate_by(PDFGenerator, filename=nome_arq))
             
-    def gerar_danfce(self, csc, via_estabelecimento=False, cidtoken='000001', nversao='100'):
+    def gerar_danfce(self, via_estabelecimento=False):
         if self.NFe is None:
             raise ValueError(u'Não é possível gerar um DANFE sem a informação de uma NF-e')
             
@@ -1291,8 +1295,8 @@ class DANFE(object):
         # Prepara o queryset para impressão
         #
         self.NFe.monta_chave()
-        #CSC 36 caracteres
-        self.NFe.gera_qrcode_nfce(csc=csc, cidtoken=cidtoken, nversao=nversao)
+        #self.NFe.gera_qrcode_nfce(csc=self.NFe.infNFeSupl.csc, cidtoken=self.NFe.infNFeSupl.cidtoken, nversao=self.NFe.infNFeSupl.cidtoken)
+        self.NFe.gera_qrcode_nfce()
         self.NFe.monta_dados_contingencia_fsda()
         self.NFe.site = self.site
         self.NFe.via_estabelecimento = via_estabelecimento
@@ -1315,6 +1319,10 @@ class DANFE(object):
         self.danfe.band_page_header.child_bands.append(self.danfe.mensagem_fiscal_topo)
         
         if self.imprime_produtos_nfce:
+            lines_xprod = 0
+            for d in self.NFe.infNFe.det:
+                lines_xprod += len(d.prod.xProd.valor)
+            self.danfe.inf_produtos.band_detail.set_band_height(lines_xprod)
             self.danfe.det_produtos.elements.append(self.danfe.inf_produtos)
             self.danfe.band_page_header.child_bands.append(self.danfe.det_produtos)
         
@@ -1377,3 +1385,33 @@ class DANFE(object):
         
         ##Ajustar o tamanho da pagina
         self.danfe.set_report_height(n_produtos=len(self.NFe.infNFe.det), n_pag=len(self.NFe.infNFe.pag))
+        
+        if self.salvar_arquivo:
+            self.caminho = self.monta_caminho_danfe(ambiente=self.NFe.infNFe.ide.tpAmb.valor, chave_nfe=self.NFe.chave, dir='DANFCE')
+            nome_arq = self.caminho + self.NFe.chave + u'.pdf'
+            type(self.danfe.generate_by(PDFGenerator, filename=nome_arq))
+    
+    def monta_caminho_danfe(self, ambiente, chave_nfe, dir=''):
+        caminho = self.caminho + u'ArquivosXML/NFe/'
+
+        if ambiente == 1:
+            caminho = os.path.join(caminho, 'producao/')
+        else:
+            caminho = os.path.join(caminho, 'homologacao/')
+
+        data = u'20' + chave_nfe[2:4] + u'-' + chave_nfe[4:6]
+        if dir:
+            caminho = os.path.join(caminho, data + u'/' + dir + u'/')
+        else:
+            serie = chave_nfe[22:25]
+            numero = chave_nfe[25:34]
+
+            caminho = os.path.join(caminho, data + u'/')
+            caminho = os.path.join(caminho, serie + u'-' + numero + u'/')
+        
+        try:
+            os.makedirs(caminho)
+        except:
+            pass
+        
+        return caminho

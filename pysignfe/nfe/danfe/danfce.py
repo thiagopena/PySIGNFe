@@ -49,12 +49,10 @@ class DANFCE(Report):
         return  data.strftime(formato)
         
     def do_on_new_page(self, page, page_number, generator):
-        if generator._current_page_number != 1:
-            print('hi')
+        pass
     
     ##Adaptar tamanha pagina com o conteudo
     def set_report_height(self, n_produtos, n_pag):
-        
         #Cabecalho
         fit_height = self.band_page_header.height
         #band_page_header.child_bands (MensagemFiscalTopo, MensagemFiscalBase, DetProdutos(0), DetTotais(0), DetPagamento(0), 
@@ -148,7 +146,7 @@ class InfoProdutos(SubReport):
             
             txt = self.inclui_campo_sem_borda(nome=u'prod_codigo', conteudo=u'prod.cProd.valor', top=0*cm, left=0*cm, width=1.9*cm)
             txt.style = {'fontName': FONTE_NFCE, 'fontSize': FONTE_TAMANHO_6, 'leading': FONTE_TAMANHO_5}
-            txt = self.inclui_campo_sem_borda(nome=u'prod_descricaco', conteudo=u'descricao_produto_formatada', top=0*cm, left=1.9*cm, width=2.1*cm)
+            txt = self.inclui_campo_sem_borda(nome=u'prod_descricaco', conteudo=u'prod.xProd.valor', top=0*cm, left=1.9*cm, width=2.1*cm)
             txt.style = {'fontName': FONTE_NFCE, 'fontSize': FONTE_TAMANHO_6, 'leading': FONTE_TAMANHO_5}
             txt = self.inclui_campo_sem_borda(nome='prod_quantidade', conteudo=u'prod.qCom.formato_danfe_nfce', top=0*cm, left=4*cm, width=1*cm)
             txt.style = {'fontName': FONTE_NFCE, 'fontSize': FONTE_TAMANHO_6, 'leading': FONTE_TAMANHO_5}
@@ -162,6 +160,12 @@ class InfoProdutos(SubReport):
             #self.auto_expand_height = True
             self.height = 0.5*cm
         
+        def set_band_height(self, field_size):
+            ##14 caracteres por linha
+            n_lines = field_size/14
+            ##0.22*cm por linha
+            self.height = 0.2*cm*(n_lines+1)
+            
                         
 class DetTotais(BandaDANFE):
     def __init__(self):
@@ -449,12 +453,11 @@ class QRCodeDanfe(BandaDANFE):
         self.height = 0*cm
     
     def gera_img_qrcode(self):
-        #self.elements.append(BarCode(type=u'QR', attribute_name=u'NFe.infNFeSupl.qrCode.valor', top=0.1*cm, left=2.15*cm, width=3.3*cm, height=3.3*cm, border=0.3*cm, qr_level='M'))
         
-        ##Tamanho QRCode nao sai corretamente, com essas medidas ele fica aprox. 28mmx28mm
-        self.elements.append(BarCode(type=u'QR', attribute_name=u'NFe.infNFeSupl.qrCode.valor', top=0.1*cm, left=2.15*cm, width=3.5*cm, height=3.5*cm, border=0.3*cm, qr_level='M'))
+        ##Aprox. 37mmx37mm
+        self.elements.append(BarCode(type=u'QR', attribute_name=u'NFe.infNFeSupl.qrCode.valor', top=0.1*cm, left=1.3*cm, width=5*cm, height=5*cm, border=0.5*cm, qr_level='M'))
         
-        self.height = 3.8*cm
+        self.height = 5.2*cm
         
 class TributosTotais(BandaDANFE):
     def __init__(self):

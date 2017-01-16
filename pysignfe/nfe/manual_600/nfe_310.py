@@ -1293,7 +1293,10 @@ class InfNFe(nfe_310.InfNFe):
 class InfNFeSupl(XMLNFe):
     def __init__(self):
         super(InfNFeSupl, self).__init__()
-        self.qrCode  = TagCaracter(nome=u'qrCode', codigo=u'ZX02', tamanho=[100, 600], raiz=u'//NFe/infNFeSupl')
+        self.qrCode     = TagCaracter(nome=u'qrCode', codigo=u'ZX02', tamanho=[100, 600], raiz=u'//NFe/infNFeSupl')
+        self.csc        = ''
+        self.cidtoken   = '000001'
+        self.nversao    = '100'
 
     def get_xml(self):
         if not self.qrCode.valor:
@@ -1329,7 +1332,7 @@ class NFe(nfe_310.NFe):
             raise ValueError('UF não habilitado para NFC-e')
         return url_consulta
         
-    def gera_qrcode_nfce(self, csc, cidtoken='000001', nversao='100'):
+    def gera_qrcode_nfce(self):
         
         url_consulta_qrcode = CONSULTA_QRCODE_NFCE[self.infNFe.emit.enderEmit.UF.valor]
         if url_consulta_qrcode == '':
@@ -1337,7 +1340,7 @@ class NFe(nfe_310.NFe):
         
         ##Montando parametros:
         params_qrcode = u'chNFe=' + unicode(self.chave) + u'&'
-        params_qrcode += u'nVersao=' + unicode(nversao) + u'&'
+        params_qrcode += u'nVersao=' + unicode(self.infNFeSupl.nversao) + u'&'
         params_qrcode += u'tpAmp=' + unicode(self.infNFe.ide.tpAmb.valor) + u'&'
         if (self.infNFe.dest.CPF.valor or self.infNFe.dest.CNPJ.valor or self.infNFe.dest.idEstrangeiro.valor):
             params_qrcode += u'cDest=' + unicode(self.infNFe.dest.CPF.valor or self.infNFe.dest.CNPJ.valor or self.infNFe.dest.idEstrangeiro.valor) + u'&'
@@ -1350,10 +1353,10 @@ class NFe(nfe_310.NFe):
         params_qrcode += u'vNF=' + unicode(self.infNFe.total.ICMSTot.vNF.valor) + u'&'
         params_qrcode += u'vICMS=' + unicode(self.infNFe.total.ICMSTot.vICMS.valor) + u'&'
         params_qrcode += u'digVal=' + unicode(digval_hex) + u'&'
-        params_qrcode += u'cIdToken=' + unicode(cidtoken.zfill(6)) + u'&'
+        params_qrcode += u'cIdToken=' + unicode(self.infNFeSupl.cidtoken.zfill(6)) + u'&'
         
         ##Calcular cHashQRCode
-        hash_string = params_qrcode + csc
+        hash_string = params_qrcode + self.infNFeSupl.csc
         hash_object = hashlib.sha1(hash_string.encode('utf-8'))
         chash_qrcode = hash_object.hexdigest()
         
@@ -1371,4 +1374,4 @@ class NFe(nfe_310.NFe):
     def preencher_campos_nfe(self):
         self.infNFe.ide.mod.valor = '55'
         self.infNFe.ide.indFinal.valor = '0'
-        
+

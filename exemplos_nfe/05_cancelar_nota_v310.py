@@ -18,11 +18,11 @@ if __name__ == '__main__':
     
     ##Modificar os dados abaixo
     #cnpj = u'99999999000191'
-    chave = u'35100910142785000190552000000000071946226632'
-    protocolo = u'135100026181256'
+    chave = u'31170102740755000158551010000000381017738769'
+    protocolo = u'131170127492528'
     justificativa = u'Teste de cancelamento de NF-e'
     
-    resultados = nova_nfe.cancelar_nota(chave=chave, protocolo=protocolo, justificativa=justificativa, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False)
+    resultados = nova_nfe.cancelar_nota(chave=chave, protocolo=protocolo, justificativa=justificativa, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False)
     print("\nResultado:\n")
     '''Retorna um dicionario'''
     for key, value in resultados.items():

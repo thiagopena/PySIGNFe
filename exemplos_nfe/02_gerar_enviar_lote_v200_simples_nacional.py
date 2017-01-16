@@ -21,7 +21,7 @@ if __name__ == '__main__':
     
     info_certificado = nova_nfe.extrair_certificado_a1(arquivo, "associacao")
     
-    ##Montar nota fiscal
+    ##Montar notas fiscais
     nfe  = NFe_200()
     nfe2 = NFe_200()
     
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     nfe.infNFe.emit.xNome.valor             = 'RAZAO SOCIAL'        
     nfe.infNFe.emit.xFant.valor             = 'Nome Fantasia'       #nao obrigatorio
     nfe.infNFe.emit.CRT.valor               = '1'                   #SIMPLES NACIONAL
-    nfe.infNFe.emit.IE.valor                = 'ISENTO'
+    nfe.infNFe.emit.IE.valor                = '1111111111111'
     
     #Endereco emitente
     nfe.infNFe.emit.enderEmit.xLgr.valor    = 'LOGRADOURO (RUA, PRACA, AVENIDA)'

@@ -42,7 +42,7 @@ if __name__ == '__main__':
     #tipo = 'cce'        ##Carta Correcao
     tipo = 'can'        ##Cancelamento
     
-    resultados = nova_nfe.enviar_lote_evento(lista_eventos=lista_eventos, tipo=tipo, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False)
+    resultados = nova_nfe.enviar_lote_evento(lista_eventos=lista_eventos, tipo=tipo, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False)
     print("\nResultado:\n")
     '''Retorna um dicionario'''
     for key, value in resultados.items():

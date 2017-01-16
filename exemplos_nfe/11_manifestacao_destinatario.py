@@ -39,7 +39,7 @@ if __name__ == '__main__':
     
     #Muitos estados ainda nao implementaram Menisfestacao do destinatario,
     # caso queira enviar para o webservice do estado passe o parametro ambiente_nacional=False
-    resultados = nova_nfe.efetuar_manifesto(cnpj=cnpj, tipo_manifesto=tipo_manifesto, chave=chave, ambiente_nacional=True, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False)
+    resultados = nova_nfe.efetuar_manifesto(cnpj=cnpj, tipo_manifesto=tipo_manifesto, chave=chave, ambiente_nacional=True, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False)
     
     print("\nResultado:\n")
     '''Retorna um dicionario'''

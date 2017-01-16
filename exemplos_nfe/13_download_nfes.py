@@ -22,7 +22,7 @@ if __name__ == '__main__':
     lista_chaves = [u'35100910142785000190552000000000071946226632', u'13140311707347000195650030000004591064552496']
     
     ##Atualmente apenas o Ceará possui webservice para download de Nfes, por isso é mais seguro manter ambiente_nacional=True
-    resultados = nova_nfe.download_notas(cnpj=cnpj, lista_chaves=lista_chaves, ambiente_nacional=True, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False)
+    resultados = nova_nfe.download_notas(cnpj=cnpj, lista_chaves=lista_chaves, ambiente_nacional=True, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False)
     
     print("\nResultado:\n")
     '''Retorna um dicionario'''

@@ -2,6 +2,7 @@
 
 import os, sys
 from datetime import datetime
+
 sys.path.insert(0, os.path.abspath(".."))
 
 from pysignfe.nf_e import nf_e
@@ -30,12 +31,12 @@ if __name__ == '__main__':
     
     #nfe.infNFe.ide.cUF.valor       = UF_CODIGO['MG']           #Preenchido automaticamente 
     nfe.infNFe.ide.natOp.valor      = 'Venda de produto'
-    nfe.infNFe.ide.indPag.valor     = 2  
+    nfe.infNFe.ide.indPag.valor     = 2
     #nfe.infNFe.ide.mod.valor       = '55'                      #Preenchido automaticamente
-    nfe.infNFe.ide.serie.valor      = 101    
-    nfe.infNFe.ide.nNF.valor        = 27    
-    nfe.infNFe.ide.dhEmi.valor      = datetime.utcnow()
-    nfe.infNFe.ide.dhSaiEnt.valor   = datetime.utcnow()
+    nfe.infNFe.ide.serie.valor      = 101
+    nfe.infNFe.ide.nNF.valor        = 41
+    nfe.infNFe.ide.dhEmi.valor      = datetime.now()
+    nfe.infNFe.ide.dhSaiEnt.valor   = datetime.now()
     nfe.infNFe.ide.tpNF.valor       = 1                         #1-entrada 2-saida
     nfe.infNFe.ide.idDest.valor     = 1
     nfe.infNFe.ide.cMunFG.valor     = '3106200'
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     nfe.infNFe.emit.xNome.valor             = 'RAZAO SOCIAL'        
     nfe.infNFe.emit.xFant.valor             = 'Nome Fantasia'
     nfe.infNFe.emit.CRT.valor               = '1'                   #SIMPLES NACIONAL
-    nfe.infNFe.emit.IE.valor                = 'ISENTO'
+    nfe.infNFe.emit.IE.valor                = '1111111111111'
     #nfe.infNFe.emit.IM.valor                = '111111111111111'
     #nfe.infNFe.emit.IEST.valor
     
@@ -90,9 +91,10 @@ if __name__ == '__main__':
     nfe.infNFe.dest.enderDest.CEP.valor     = '30190110'
     nfe.infNFe.dest.enderDest.cPais.valor   = '1058'
     nfe.infNFe.dest.enderDest.xPais.valor   = 'Brasil'
-    
     nfe.infNFe.dest.enderDest.fone.valor    = '3122222222'
-    nfe.infNFe.dest.IE.valor = '111111111111'
+    
+    #nfe.infNFe.dest.IE.valor = '111111111111'
+    nfe.infNFe.dest.indIEDest.valor = '2'
     
     #Detalhamento dos produtos e servicos
     det = Det_310()
@@ -153,8 +155,10 @@ if __name__ == '__main__':
     nfe.gera_nova_chave()
     
     #Gera e emite nota fiscal
-    resultados = nova_nfe.processar_nota(xml_nfe=nfe.xml, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=True, consumidor=True, consultar_servico=False)
+    resultados = nova_nfe.processar_nota(xml_nfe=nfe.xml, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False, consumidor=False, consultar_servico=False)
+    
     print("\nResultado:\n")
     '''Retorna um dicionario'''
     for key, value in resultados.items():
         print(str(key)+" : "+str(value))
+    

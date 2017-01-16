@@ -18,11 +18,11 @@ if __name__ == '__main__':
     
     ##Modificar os dados abaixo
     cnpj = u'99999999000191'
-    serie = u'200'
-    numero = u'7'
+    serie = u'101'
+    numero = u'27'
     justificativa = u'Teste de inutilizacao de NF-e'
     
-    resultados = nova_nfe.inutilizar_nota(cnpj=cnpj, serie=serie, numero=numero, justificativa=justificativa, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', tipo_contingencia=False)
+    resultados = nova_nfe.inutilizar_nota(cnpj=cnpj, serie=serie, numero=numero, justificativa=justificativa, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False)
     print("\nResultado:\n")
     '''Retorna um dicionario'''
     for key, value in resultados.items():

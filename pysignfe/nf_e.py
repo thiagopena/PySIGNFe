@@ -59,7 +59,34 @@ class nf_e(NotaFiscal):
 
         return{'status': processo.resposta.cStat.valor, 'status_motivo': processo.resposta.xMotivo.valor, 
                 'envio': processo.envio.xml, 'resposta': processo.resposta.xml, 'reason': processo.resposta.reason}
-
+    
+    def gerar_xml(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG', salvar_arquivos=True):
+        p = ProcessadorNFe()
+        p.ambiente = ambiente
+        p.estado = estado
+        p.versao = versao
+        p.certificado.cert_str = cert
+        p.certificado.key_str = key
+        p.salvar_arquivos = salvar_arquivos
+        p.caminho = u''
+        
+        if versao == '3.10':
+            n = NFe_310()
+        else:
+            n = NFe_200()
+        n.infNFe.xml = xml_nfe
+                
+        n.auto_preencher_campos(ambiente=ambiente, estado=estado)
+        
+        if consumidor:
+            n.preencher_campos_nfce()
+        else:
+            n.preencher_campos_nfe()
+            
+        p.gerar_xml([n])
+        
+        
+    
     def processar_nota(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
                       contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
         """

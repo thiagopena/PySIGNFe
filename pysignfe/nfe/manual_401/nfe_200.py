@@ -1815,7 +1815,7 @@ class NFe(nfe_110.NFe):
         self.infNFe.ide.mod.valor = '55'
         #self.infNFe.ide.indFinal.valor = '0'
         
-    def auto_preencher_campos(self, ambiente, estado, contingencia, consumidor):
+    def auto_preencher_campos(self, ambiente, estado, contingencia=False, consumidor=False):
         self.infNFe.ide.tpAmb.valor   = ambiente
         self.infNFe.ide.cUF.valor     = UF_CODIGO[estado]
         self.infNFe.ide.verProc.valor = __version__

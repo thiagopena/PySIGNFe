@@ -804,6 +804,47 @@ class ProcessadorNFe(object):
             self.caminho = caminho_original
             
         return processo
+        
+    def gerar_xml(self, lista_nfes, numero_lote=None):
+        novos_arquivos = []
+        
+        if numero_lote is None:
+            numero_lote = datetime.now().strftime('%Y%m%d%H%M%S')
+            
+        nfe = lista_nfes[0]
+        nfe.monta_chave()
+        ambiente = nfe.infNFe.ide.tpAmb.valor
+        
+        caminho_original = self.caminho
+        self.caminho = self.monta_caminho_nfe(ambiente=nfe.infNFe.ide.tpAmb.valor, chave_nfe=nfe.chave, dir='Lotes')
+        
+        if self.versao == u'2.00':
+            envio = EnviNFe_200()
+        elif self.versao == u'3.10':
+            envio = EnviNFe_310()
+        
+        self.certificado.prepara_certificado_arquivo_pfx()
+        
+        for nfe in lista_nfes:
+            self.certificado.assina_xmlnfe(nfe)
+            nfe.validar()
+
+        envio.NFe = lista_nfes
+        envio.idLote.valor = numero_lote
+        envio.validar()
+        
+        if self.salvar_arquivos:
+            for n in lista_nfes:
+                n.monta_chave()
+                novo_arquivo_nome = n.chave + u'-nfe.xml'
+                novo_arquivo = n.xml.encode('utf-8')
+                novos_arquivos.append((novo_arquivo_nome, novo_arquivo))
+
+            novo_arquivo_nome = unicode(envio.idLote.valor).strip().rjust(15, u'0') + u'-env-lot.xml'
+            novo_arquivo = envio.xml.encode('utf-8')
+            novos_arquivos.append((novo_arquivo_nome, novo_arquivo))
+            
+            self.salvar_novos_arquivos(novos_arquivos=novos_arquivos)
 
     def processar_notas(self, lista_nfes, numero_lote=None):
         #

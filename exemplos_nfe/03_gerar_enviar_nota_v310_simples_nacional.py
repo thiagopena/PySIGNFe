@@ -37,7 +37,7 @@ if __name__ == '__main__':
     nfe.infNFe.ide.nNF.valor        = 41
     nfe.infNFe.ide.dhEmi.valor      = datetime.now()
     nfe.infNFe.ide.dhSaiEnt.valor   = datetime.now()
-    nfe.infNFe.ide.tpNF.valor       = 1                         #1-entrada 2-saida
+    nfe.infNFe.ide.tpNF.valor       = 1                         #0-entrada 1-saida
     nfe.infNFe.ide.idDest.valor     = 1
     nfe.infNFe.ide.cMunFG.valor     = '3106200'
     nfe.infNFe.ide.tpImp.valor      = 1

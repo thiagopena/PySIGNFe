@@ -18,6 +18,7 @@ setup(
                                                os.path.join('schema', 'pl_006r', '*'),
                                                os.path.join('schema', 'pl_006s', '*')],
                   'pysignfe.nfe.manual_500':  [os.path.join('schema', 'pl_008e', '*')],
+                  'pysignfe.nfe.manual_600':  [os.path.join('schema', 'pl_008i2', '*')],
                   'pysignfe.xml_sped':  [os.path.join('schema', '*')],
                   'pysignfe.nfse': ['certificados/*'],
                   'pysignfe.nfse.bhiss': [os.path.join('v10', 'schema', '*')]

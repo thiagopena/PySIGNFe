@@ -83,7 +83,20 @@ class nf_e(NotaFiscal):
         else:
             n.preencher_campos_nfe()
             
-        p.gerar_xml([n])
+        processo =  p.gerar_xml([n])
+        '''
+        vals = {
+            'envio': processo.envio.xml,
+            'erros_validacao_envio': processo.envio.erros,
+            'alertas_validacao_envio': processo.envio.alertas,
+        }
+            
+        for i, nota in enumerate(processo.envio.NFe):
+            vals['chave_nfe_'+str(i)]  = nota.chave
+            vals['erros_validacao_nfe_'+str(i)] = nota.erros
+            vals['alertas_validacao_nfe_'+str(i)] = nota.alertas
+        '''
+        return processo
         
         
     

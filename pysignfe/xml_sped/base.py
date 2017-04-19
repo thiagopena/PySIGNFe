@@ -865,22 +865,12 @@ class XMLNFe(NohXML):
         esquema = etree.XMLSchema(etree.parse(arquivo_esquema))
         
         if not esquema.validate(etree.fromstring(xml)):
-            for nr, line in enumerate(etree.tostring(etree.fromstring(xml),
-                    encoding="utf-8",
-                    pretty_print=True
-                ).decode('utf-8').split('\n')):
-                    pass
-            #tratamento feito provisoriamente para uso com OpenERP
-            xml_arquivo = open('/tmp/xml.txt', 'wb').write(xml)
-            valida_esquema_arquivo = open('/tmp/arquivo_esquema.txt', 'wb').write(arquivo_esquema.encode('utf-8'))
-            #subprocess.call(["python", DIRNAME + '/valida.py'])
-            #erro_log = open('/tmp/erro_log_nfe.txt', 'r').read()
-            erro_log = esquema.error_log.last_error
-            os.remove('/tmp/xml.txt')
-            os.remove('/tmp/arquivo_esquema.txt')
-            #os.remove('/tmp/erro_log_nfe.txt')
-            raise Exception(u'Nao validou no esquema "%s"' % erro_log)
-
+            for e in esquema.error_log:
+                if e.level == 1:
+                    self.alertas.append(e.message.replace('{http://www.portalfiscal.inf.br/nfe}', ''))
+                elif e.level == 2:
+                    self.erros.append(e.message.replace('{http://www.portalfiscal.inf.br/nfe}', ''))
+        
         return esquema.error_log
         
     def le_grupo(self, raiz_grupo, classe_grupo, sigla_ns=None):

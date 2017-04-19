@@ -822,6 +822,8 @@ class ProcessadorNFe(object):
             envio = EnviNFe_200()
         elif self.versao == u'3.10':
             envio = EnviNFe_310()
+            
+        processo = ProcessoNFe(envio=envio)
         
         self.certificado.prepara_certificado_arquivo_pfx()
         
@@ -845,7 +847,9 @@ class ProcessadorNFe(object):
             novos_arquivos.append((novo_arquivo_nome, novo_arquivo))
             
             self.salvar_novos_arquivos(novos_arquivos=novos_arquivos)
-
+        
+        return processo
+        
     def processar_notas(self, lista_nfes, numero_lote=None):
         #
         # Definir o caminho geral baseado na 1ª NF-e

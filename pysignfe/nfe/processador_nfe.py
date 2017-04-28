@@ -841,10 +841,11 @@ class ProcessadorNFe(object):
                 novo_arquivo_nome = n.chave + u'-nfe.xml'
                 novo_arquivo = n.xml.encode('utf-8')
                 novos_arquivos.append((novo_arquivo_nome, novo_arquivo))
-
-            novo_arquivo_nome = unicode(envio.idLote.valor).strip().rjust(15, u'0') + u'-env-lot.xml'
-            novo_arquivo = envio.xml.encode('utf-8')
-            novos_arquivos.append((novo_arquivo_nome, novo_arquivo))
+            
+            ##Nao salva o lote, apenas NF-es
+            #novo_arquivo_nome = unicode(envio.idLote.valor).strip().rjust(15, u'0') + u'-env-lot.xml'
+            #novo_arquivo = envio.xml.encode('utf-8')
+            #novos_arquivos.append((novo_arquivo_nome, novo_arquivo))
             
             self.salvar_novos_arquivos(novos_arquivos=novos_arquivos)
         

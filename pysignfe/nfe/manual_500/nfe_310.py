@@ -254,11 +254,6 @@ class TagCSTICMS(nfe_200.TagCSTICMS):
             self.grupo_icms.pRedBC.obrigatorio   = True
             self.grupo_icms.pICMS.obrigatorio    = True
             self.grupo_icms.vICMS.obrigatorio    = True
-            #novo campos 3.10
-            self.grupo_icms.vICMSDeson.obrigatorio = True
-            self.grupo_icms.motDesICMS.obrigatorio = True
-
-
 
         elif self.valor == u'30':
             self.grupo_icms.nome_tag = u'ICMS30'
@@ -267,11 +262,6 @@ class TagCSTICMS(nfe_200.TagCSTICMS):
             self.grupo_icms.vBCST.obrigatorio    = True
             self.grupo_icms.pICMSST.obrigatorio  = True
             self.grupo_icms.vICMSST.obrigatorio  = True
-            #novo campos 3.10
-            self.grupo_icms.vICMSDeson.obrigatorio = True
-            self.grupo_icms.motDesICMS.obrigatorio = True
-
-
 
         elif self.valor in (u'40', u'41', u'50'):
             if self.grupo_icms.repasse and self.valor == u'41':
@@ -281,15 +271,9 @@ class TagCSTICMS(nfe_200.TagCSTICMS):
                 self.grupo_icms.vICMSSTRet.obrigatorio  = True
                 self.grupo_icms.vBCSTDest.obrigatorio   = True
                 self.grupo_icms.vICMSSTDest.obrigatorio = True
-                #novo campos 3.10
-                self.grupo_icms.vICMSDeson.obrigatorio = True
-                self.grupo_icms.motDesICMS.obrigatorio = True
             else:
                 self.grupo_icms.nome_tag = u'ICMS40'
                 self.grupo_icms.raiz_tag = u'//det/imposto/ICMS/ICMS40'
-                #novo campos 3.10
-                self.grupo_icms.vICMSDeson.obrigatorio = True
-                self.grupo_icms.motDesICMS.obrigatorio = True
 
         elif self.valor == u'51':
             self.grupo_icms.nome_tag = u'ICMS51'
@@ -313,9 +297,6 @@ class TagCSTICMS(nfe_200.TagCSTICMS):
             self.grupo_icms.vBCST.obrigatorio    = True
             self.grupo_icms.pICMSST.obrigatorio  = True
             self.grupo_icms.vICMSST.obrigatorio  = True
-            #novo campos 3.10
-            self.grupo_icms.vICMSDeson.obrigatorio = True
-            self.grupo_icms.motDesICMS.obrigatorio = True
 
         elif self.valor == u'90':
             self.grupo_icms.modBC.obrigatorio    = True
@@ -326,9 +307,6 @@ class TagCSTICMS(nfe_200.TagCSTICMS):
             self.grupo_icms.vBCST.obrigatorio    = True
             self.grupo_icms.pICMSST.obrigatorio  = True
             self.grupo_icms.vICMSST.obrigatorio  = True
-            #novo campos 3.10
-            self.grupo_icms.vICMSDeson.obrigatorio = True
-            self.grupo_icms.motDesICMS.obrigatorio = True
 
             if not self.grupo_icms.partilha:
                 self.grupo_icms.nome_tag = u'ICMS90'

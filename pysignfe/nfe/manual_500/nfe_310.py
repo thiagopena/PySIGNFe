@@ -375,6 +375,319 @@ class ICMS(nfe_200.ICMS):
         self.CST = TagCSTICMS()
         self.CST.grupo_icms = self
         self.CST.valor = '41'
+    
+    def get_xml(self):
+        #
+        # Define as tags baseado no código da situação tributária
+        #
+        xml = XMLNFe.get_xml(self)
+        xml += u'<ICMS><' + self.nome_tag + u'>'
+        xml += self.orig.xml
+
+        #
+        # Se for regime tradicional (não Simples Nacional)
+        #
+        if self.regime_tributario != 1:
+            xml += self.CST.xml
+
+            if self.CST.valor == u'00':
+                xml += self.modBC.xml
+                xml += self.vBC.xml
+                xml += self.pICMS.xml
+                xml += self.vICMS.xml
+            elif self.CST.valor == u'10':
+                if not self.partilha:
+                    xml += self.modBC.xml
+                    xml += self.vBC.xml
+                    #xml += self.pRedBC.xml
+                    xml += self.pICMS.xml
+                    xml += self.vICMS.xml
+                    xml += self.modBCST.xml
+
+                    # Somente quando for marge de valor agregado
+                    if self.modBCST.valor == 4:
+                        xml += self.pMVAST.xml
+
+                    xml += self.pRedBCST.xml
+                    xml += self.vBCST.xml
+                    xml += self.pICMSST.xml
+                    xml += self.vICMSST.xml
+                else:
+                    xml += self.modBC.xml
+                    xml += self.vBC.xml
+                    xml += self.pRedBC.xml
+                    xml += self.pICMS.xml
+                    xml += self.vICMS.xml
+                    xml += self.modBCST.xml
+
+                    # Somente quando for marge de valor agregado
+                    if self.modBCST.valor == 4:
+                        xml += self.pMVAST.xml
+
+                    xml += self.pRedBCST.xml
+                    xml += self.vBCST.xml
+                    xml += self.pICMSST.xml
+                    xml += self.vICMSST.xml
+                    xml += self.pBCOp.xml
+                    xml += self.UFST.xml
+
+            elif self.CST.valor == u'20':
+                xml += self.modBC.xml
+                xml += self.pRedBC.xml
+                xml += self.vBC.xml
+                xml += self.pICMS.xml
+                xml += self.vICMS.xml
+                xml += self.vICMSDeson.xml
+                xml += self.motDesICMS.xml
+
+            elif self.CST.valor == u'30':
+                xml += self.modBCST.xml
+
+                # Somente quando for marge de valor agregado
+                if self.modBCST.valor == 4:
+                    xml += self.pMVAST.xml
+
+                xml += self.pRedBCST.xml
+                xml += self.vBCST.xml
+                xml += self.pICMSST.xml
+                xml += self.vICMSST.xml
+                xml += self.vICMSDeson.xml
+                xml += self.motDesICMS.xml
+
+            elif self.CST.valor in (u'40', u'41', u'50'):
+                if self.repasse and self.CST.valor == u'41':
+                    xml += self.vBCSTRet.xml
+                    xml += self.vICMSSTRet.xml
+                    xml += self.vBCSTDest.xml
+                    xml += self.vICMSSTDest.xml
+
+                elif self.motDesICMS.valor:
+                    xml += self.vICMSDeson.xml
+                    xml += self.motDesICMS.xml
+
+            elif self.CST.valor == u'51':
+                xml += self.modBC.xml
+                xml += self.pRedBC.xml
+                xml += self.vBC.xml
+                xml += self.pICMS.xml
+                xml += self.vICMSOp.xml
+                xml += self.pDif.xml
+                xml += self.vICMSDif.xml
+                xml += self.vICMS.xml
+
+            elif self.CST.valor == u'60':
+                xml += self.vBCSTRet.xml
+                xml += self.vICMSSTRet.xml
+
+            elif self.CST.valor == u'70':
+                xml += self.modBC.xml
+                xml += self.pRedBC.xml
+                xml += self.vBC.xml
+                xml += self.pICMS.xml
+                xml += self.vICMS.xml
+                xml += self.modBCST.xml
+
+                # Somente quando for marge de valor agregado
+                if self.modBCST.valor == 4:
+                    xml += self.pMVAST.xml
+
+                xml += self.pRedBCST.xml
+                xml += self.vBCST.xml
+                xml += self.pICMSST.xml
+                xml += self.vICMSST.xml
+                xml += self.vICMSDeson.xml
+                xml += self.motDesICMS.xml
+
+            elif self.CST.valor == u'90':
+                xml += self.modBC.xml
+                xml += self.vBC.xml
+                xml += self.pRedBC.xml
+                xml += self.pICMS.xml
+                xml += self.vICMS.xml
+                xml += self.modBCST.xml
+
+                # Somente quando for marge de valor agregado
+                if self.modBCST.valor == 4:
+                    xml += self.pMVAST.xml
+
+                xml += self.pRedBCST.xml
+                xml += self.vBCST.xml
+                xml += self.pICMSST.xml
+                xml += self.vICMSST.xml
+                if not self.partilha:
+                    xml += self.vICMSDeson.xml
+                    xml += self.motDesICMS.xml
+                else:
+                    xml += self.pBCOp.xml
+                    xml += self.UFST.xml
+
+        #
+        # O regime tributário é o Simples Nacional
+        #
+        else:
+            xml += self.CSOSN.xml
+
+            if self.CSOSN.valor == u'101':
+                xml += self.pCredSN.xml
+                xml += self.vCredICMSSN.xml
+
+            elif self.CSOSN.valor in (u'102', u'103', u'300', u'400'):
+                pass
+
+            elif self.CSOSN.valor == u'201':
+                xml += self.modBCST.xml
+
+                # Somente quando for marge de valor agregado
+                if self.modBCST.valor == 4:
+                    xml += self.pMVAST.xml
+
+                xml += self.pRedBCST.xml
+                xml += self.vBCST.xml
+                xml += self.pICMSST.xml
+                xml += self.vICMSST.xml
+                xml += self.pCredSN.xml
+                xml += self.vCredICMSSN.xml
+
+            elif self.CSOSN.valor in (u'202', u'203'):
+                xml += self.modBCST.xml
+
+                # Somente quando for marge de valor agregado
+                if self.modBCST.valor == 4:
+                    xml += self.pMVAST.xml
+
+                xml += self.pRedBCST.xml
+                xml += self.vBCST.xml
+                xml += self.pICMSST.xml
+                xml += self.vICMSST.xml
+
+            elif self.CSOSN.valor == u'500':
+                xml += self.vBCSTRet.xml
+                xml += self.vICMSSTRet.xml
+
+            elif self.CSOSN.valor == u'900':
+                xml += self.modBC.xml
+                xml += self.vBC.xml
+                xml += self.pRedBC.xml
+                xml += self.pICMS.xml
+                xml += self.vICMS.xml
+                xml += self.modBCST.xml
+
+                # Somente quando for marge de valor agregado
+                if self.modBCST.valor == 4:
+                    xml += self.pMVAST.xml
+
+                xml += self.pRedBCST.xml
+                xml += self.vBCST.xml
+                xml += self.pICMSST.xml
+                xml += self.vICMSST.xml
+                xml += self.pCredSN.xml
+                xml += self.vCredICMSSN.xml
+
+        xml += u'</' + self.nome_tag + u'></ICMS>'
+        return xml
+
+    def set_xml(self, arquivo):
+        if self._le_xml(arquivo):
+            #
+            # Para ler corretamente o ICMS, primeiro temos que descobrir em
+            # qual grupo de situação tributária ele está
+            #
+            self.partilha = False
+            self.repasse  = False
+            if self._le_noh(u'//det/imposto/ICMS/ICMS00') is not None:
+                self.regime_tributario = 3
+                self.CST.valor = u'00'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMS10') is not None:
+                self.regime_tributario = 3
+                self.CST.valor = u'10'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMS20') is not None:
+                self.regime_tributario = 3
+                self.CST.valor = u'20'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMS30') is not None:
+                self.regime_tributario = 3
+                self.CST.valor = u'30'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMS40') is not None:
+                self.regime_tributario = 3
+                self.CST.valor = u'40'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMS51') is not None:
+                self.regime_tributario = 3
+                self.CST.valor = u'51'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMS60') is not None:
+                self.regime_tributario = 3
+                self.CST.valor = u'60'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMS70') is not None:
+                self.regime_tributario = 3
+                self.CST.valor = u'70'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMS90') is not None:
+                self.regime_tributario = 3
+                self.CST.valor = u'90'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMSPart') is not None:
+                self.regime_tributario = 3
+                self.partilha = True
+                self.CST.valor = u'10'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMSST') is not None:
+                self.regime_tributario = 3
+                self.repasse = True
+                self.CST.valor = u'41'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMSSN101') is not None:
+                self.regime_tributario = 1
+                self.CSOSN.valor = u'101'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMSSN102') is not None:
+                self.regime_tributario = 1
+                self.CSOSN.valor = u'102'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMSSN201') is not None:
+                self.regime_tributario = 1
+                self.CSOSN.valor = u'201'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMSSN202') is not None:
+                self.regime_tributario = 1
+                self.CSOSN.valor = u'202'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMSSN500') is not None:
+                self.regime_tributario = 1
+                self.CSOSN.valor = u'500'
+            elif self._le_noh(u'//det/imposto/ICMS/ICMSSN900') is not None:
+                self.regime_tributario = 1
+                self.CSOSN.valor = u'900'
+
+            #
+            # Agora podemos ler os valores tranquilamente...
+            #
+            self.orig.xml       = arquivo
+
+            if self.regime_tributario == 1:
+                self.CSOSN.xml       = arquivo
+            else:
+                self.CST.xml        = arquivo
+
+            self.modBC.xml      = arquivo
+            self.vBC.xml        = arquivo
+            self.pRedBC.xml     = arquivo
+            self.pICMS.xml      = arquivo
+            self.vICMS.xml      = arquivo
+            self.modBCST.xml    = arquivo
+            self.pMVAST.xml     = arquivo
+            self.pRedBCST.xml   = arquivo
+            self.vBCST.xml      = arquivo
+            self.pICMSST.xml    = arquivo
+            self.vICMSST.xml    = arquivo
+            self.vBCSTRet.xml   = arquivo
+            self.vICMSSTRet.xml = arquivo
+            self.vICMSDeson.xml = arquivo
+            self.vICMSOp.xml    = arquivo
+            self.pDif.xml       = arquivo
+            self.vICMSDif.xml   = arquivo
+
+            if self.regime_tributario == 1:
+                self.pCredSN.xml     = arquivo
+                self.vCredICMSSN.xml = arquivo
+            else:
+                self.UFST.xml        = arquivo
+                self.pBCOp.xml       = arquivo
+                self.motDesICMS.xml  = arquivo
+                self.vBCSTDest.xml   = arquivo
+                self.vICMSSTDest.xml = arquivo
+                
+    xml = property(get_xml, set_xml)
+
 
 
 class Imposto(nfe_200.Imposto):

@@ -295,6 +295,19 @@ class ICMS(nfe_310.ICMS):
         self.vICMSOp    = TagDecimal(nome='vICMSOp', codigo='P16a', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz='', obrigatorio=False)
         self.pDif       = TagDecimal(nome='pDif', codigo='P16b', tamanho=[1, 7, 1], decimais=[0, 2, 4], raiz='', obrigatorio=False)
         self.vICMSDif   = TagDecimal(nome='vICMSDif', codigo='P16b', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz='', obrigatorio=False)
+        #
+        # Situação tributária do Simples Nacional
+        #
+        self.CSOSN = TagCSOSN()
+        self.CSOSN.grupo_icms = self
+        self.CSOSN.valor = '400'
+
+        #
+        # Situação tributária tradicional
+        #
+        self.CST = TagCSTICMS()
+        self.CST.grupo_icms = self
+        self.CST.valor = '41'
         
     def get_xml(self):
         #

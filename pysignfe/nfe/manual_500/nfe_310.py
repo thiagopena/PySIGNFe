@@ -159,7 +159,7 @@ class TagCSTICMS(nfe_200.TagCSTICMS):
 
     def set_valor(self, novo_valor):
         super(TagCSTICMS, self).set_valor(novo_valor)
-
+        
         if not self.grupo_icms:
             return None
 
@@ -373,6 +373,31 @@ class TagCSTICMS(nfe_200.TagCSTICMS):
 class ICMS(nfe_200.ICMS):
     def __init__(self):
         super(ICMS, self).__init__()
+        ##Modifica casas decimais
+        self.pRedBC   = TagDecimal(nome='pRedBC'  , codigo='N14', tamanho=[1,  5, 1], decimais=[0, 4, 4], raiz='')
+        self.pICMS    = TagDecimal(nome='pICMS'   , codigo='N16', tamanho=[1,  5, 1], decimais=[0, 4, 4], raiz='')
+        self.pMVAST   = TagDecimal(nome='pMVAST'  , codigo='N19', tamanho=[1,  5, 1], decimais=[0, 4, 4], raiz='')
+        self.pRedBCST = TagDecimal(nome='pRedBCST', codigo='N20', tamanho=[1,  5, 1], decimais=[0, 4, 4], raiz='')
+        self.pICMSST  = TagDecimal(nome='pICMSST' , codigo='N22', tamanho=[1,  5, 1], decimais=[0, 4, 4], raiz='')
+        self.pCredSN  = TagDecimal(nome='pCredSN' , codigo='N29', tamanho=[1, 15, 1], decimais=[0, 4, 4], raiz='')
+        ##Novas tags
+        self.vICMSDeson = TagDecimal(nome='vICMSDeson', codigo='N27a', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz='', obrigatorio=False)
+        self.vICMSOp    = TagDecimal(nome='vICMSOp', codigo='P16a', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz='', obrigatorio=False)
+        self.pDif       = TagDecimal(nome='pDif', codigo='P16b', tamanho=[1, 7, 1], decimais=[0, 2, 4], raiz='', obrigatorio=False)
+        self.vICMSDif   = TagDecimal(nome='vICMSDif', codigo='P16b', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz='', obrigatorio=False)
+        #
+        # Situação tributária do Simples Nacional
+        #
+        self.CSOSN = TagCSOSN()
+        self.CSOSN.grupo_icms = self
+        self.CSOSN.valor = '400'
+
+        #
+        # Situação tributária tradicional
+        #
+        self.CST = TagCSTICMS()
+        self.CST.grupo_icms = self
+        self.CST.valor = '41'
 
 
 class Imposto(nfe_200.Imposto):

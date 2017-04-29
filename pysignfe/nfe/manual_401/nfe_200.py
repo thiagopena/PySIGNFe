@@ -563,7 +563,7 @@ class ICMS(nfe_110.ICMS):
         self.pBCOp       = TagDecimal(nome=u'pBCOp'      , codigo=u'N25', tamanho=[1,  5, 1], decimais=[0, 2, 2], raiz=u'')
         self.vBCSTRet    = TagDecimal(nome=u'vBCSTRet'   , codigo=u'N26', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'')
         self.vICMSSTRet  = TagDecimal(nome=u'vICMSSTRet' , codigo=u'N27', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'')
-        self.motDesICMS  = TagInteiro(nome=u'motDesICMS' , codigo=u'N28', tamanho=[1, 1]                        , raiz=u'')
+        self.motDesICMS  = TagInteiro(nome=u'motDesICMS' , codigo=u'N28', tamanho=[1, 2]                        , raiz=u'')
         self.pCredSN     = TagDecimal(nome=u'pCredSN'    , codigo=u'N29', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'')
         self.vCredICMSSN = TagDecimal(nome=u'vCredICMSSN', codigo=u'N30', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'')
         self.vBCSTDest   = TagDecimal(nome=u'vBCSTDest'  , codigo=u'N31', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz=u'')

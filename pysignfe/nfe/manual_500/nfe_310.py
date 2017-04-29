@@ -213,7 +213,6 @@ class TagCSTICMS(nfe_200.TagCSTICMS):
         self.grupo_icms.pBCOp.valor       = u'0.00'
         #campos versao 3.10
         self.grupo_icms.vICMSDeson.valor = u'0.00'
-        self.grupo_icms.motDesICMS.valor = u'0.00'
 
         #
         # Para cada código de situação tributária,

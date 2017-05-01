@@ -143,6 +143,7 @@ class nf_e(NotaFiscal):
         vals = {'envio': processo.envio.xml,
                 'resposta': processo.resposta.xml,
                 'chave_nfe': n.chave,
+                'status_http': processo.resposta.status,
                 'status_resposta_lote': processo.resposta.cStat.valor,
                 'status_motivo_lote': processo.resposta.xMotivo.valor,
                 'reason': processo.resposta.reason

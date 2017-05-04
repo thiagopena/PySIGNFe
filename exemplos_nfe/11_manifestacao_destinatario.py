@@ -39,10 +39,14 @@ if __name__ == '__main__':
     
     #Muitos estados ainda nao implementaram Menisfestacao do destinatario,
     # caso queira enviar para o webservice do estado passe o parametro ambiente_nacional=False
-    resultados = nova_nfe.efetuar_manifesto(cnpj=cnpj, tipo_manifesto=tipo_manifesto, chave=chave, ambiente_nacional=True, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False)
+    processo = nova_nfe.efetuar_manifesto(cnpj=cnpj, tipo_manifesto=tipo_manifesto, chave=chave, ambiente_nacional=True, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False)
     
-    print("\nResultado:\n")
-    '''Retorna um dicionario'''
-    for key, value in resultados.items():
-        print(str(key)+" : "+str(value))
+    print('Status do Lote: ', processo.resposta.cStat.valor)
+    print('Motivo do Lote: ', processo.resposta.xMotivo.valor)    
+        
+    ##Resposta de cada evento enviado
+    for i,ret in enumerate(processo.resposta.retEvento):
+        print('Status resposta: ', ret.infEvento.cStat.valor)
+        print('Numero do protocolo: ', ret.infEvento.nProt.valor)
+        print('Motivo: ', ret.infEvento.xMotivo.valor)
     

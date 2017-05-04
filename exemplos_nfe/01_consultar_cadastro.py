@@ -19,7 +19,7 @@ if __name__ == '__main__':
     #ie   = '1111111111111'
     
     ##CPF ou CNPJ ou IE
-    resultado = nova_nfe.consultar_cadastro(cert=info_certificado['cert'], key=info_certificado['key'], cpf_cnpj=cnpj, versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True)
-    print('Status: '+str(resultado['status_resposta']))
-    print('Motivo: '+str(resultado['status_motivo']))
-    print('Razao: '+str(resultado['reason']))
+    processo = nova_nfe.consultar_cadastro(cert=info_certificado['cert'], key=info_certificado['key'], cpf_cnpj=cnpj, versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True)
+    print('Status: ' + processo.resposta.infCons.cStat.valor)
+    print('Motivo: ' + processo.resposta.infCons.xMotivo.valor)
+    print('Razao: ' + processo.resposta.reason)

@@ -20,8 +20,8 @@ if __name__ == '__main__':
     chave = u'31161011111111111111551010000000271543577682'
     
     #Consultar NFe
-    resultados = nova_nfe.consultar_nfe(chave=chave, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False)
-    print("\nResultado:\n")
-    '''Retorna um dicionario'''
-    for key, value in resultados.items():
-        print(str(key)+" : "+str(value))
+    processo = nova_nfe.consultar_nfe(chave=chave, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False)
+    
+    print('Status: ' + processo.resposta.cStat.valor)
+    print('Motivo: ' + processo.resposta.xMotivo.valor)
+    print('Razao: ' + processo.resposta.reason)

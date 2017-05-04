@@ -150,8 +150,23 @@ if __name__ == '__main__':
     lista_xml_nfe.append(nfe2.xml)
     
     #Gera e emite nota fiscal
-    resultados = nova_nfe.processar_lote(lista_xml_nfe=lista_xml_nfe, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'2.00', ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True)
-    print("\nResultado:\n")
-    '''Retorna um dicionario'''
-    for key, value in resultados.items():
-        print(str(key)+" : "+str(value))
+    processos = nova_nfe.processar_lote(lista_xml_nfe=lista_xml_nfe, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'2.00', ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True)
+    
+    print('Status do Lote: ', processos['lote'].resposta.cStat.valor)
+    print('Motivo do Lote: ', processos['lote'].resposta.xMotivo.valor)    
+        
+    ##Status por nota
+    for proc in processos['notas']:
+        print('NF-e: ', proc.NFe.chave)
+        print('\tStatus da nota: ', proc.protNFe.infProt.cStat.valor)
+        print('\tNumero do protocolo: ', proc.protNFe.infProt.nProt.valor)
+        print('\tMotivo: ', proc.protNFe.infProt.xMotivo.valor)
+        
+        ##Gerar DANFE/DANFCE
+        if proc.protNFe.infProt.nProt.valor:
+            if proc.NFe.infNFe.ide.mod == 65:
+                nova_nfe.gerar_danfce(proc_nfce=proc.xml, salvar_arquivo=True)
+            elif proc.NFe.infNFe.ide.mod == 55:
+                nova_nfe.gerar_danfe(proc_nfe=proc.xml, salvar_arquivo=True)
+    
+    

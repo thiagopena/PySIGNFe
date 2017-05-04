@@ -41,10 +41,15 @@ if __name__ == '__main__':
     '''
     nsu = u'0'
         
-    resultados = nova_nfe.consultar_nfe_destinatario(cnpj=cnpj, indnfe=indnfe, indemi=indemi, nsu=nsu, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'2.00', ambiente=2, estado=u'MG', contingencia=False)
+    processo = nova_nfe.consultar_nfe_destinatario(cnpj=cnpj, indnfe=indnfe, indemi=indemi, nsu=nsu, cert=info_certificado['cert'], key=info_certificado['key'], versao=u'2.00', ambiente=2, estado=u'MG', contingencia=False)
     
-    print("\nResultado:\n")
-    '''Retorna um dicionario'''
-    for key, value in resultados.items():
-        print(str(key)+" : "+str(value))
+    print('Status: ' + processo.resposta.cStat.valor)
+    print('Motivo: ' + processo.resposta.xMotivo.valor)
+    print('Razao: ' + processo.resposta.reason)
+    
+    #if processo.resposta.cStat.valor == '138': #Documento localizado para o destinatário
+    #    for resp in processo.resposta.ret:
+            #...
+                
+                
     

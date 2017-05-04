@@ -15,7 +15,7 @@ if __name__ == '__main__':
     
     info_certificado = nova_nfe.extrair_certificado_a1(arquivo, "associacao")
     
-    resultado = nova_nfe.consultar_servidor(cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=False)
-    print('Status: '+str(resultado['status']))
-    print('Motivo Status: '+str(resultado['status_motivo']))
-    print('Razao: '+str(resultado['reason']))
+    processo = nova_nfe.consultar_servidor(cert=info_certificado['cert'], key=info_certificado['key'], versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=False)
+    print('Status: ' + processo.resposta.cStat.valor)
+    print('Motivo Status: ' + processo.resposta.xMotivo.valor)
+    print('Razao: ' + processo.resposta.reason)

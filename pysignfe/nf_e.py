@@ -26,6 +26,7 @@ from pysignfe.nfe.webservices_flags import WS_NFE_CONSULTA_CADASTRO, WS_NFE_EVEN
 
 FILE_DIR = abspath(dirname(__file__))
 
+
 class nf_e(NotaFiscal):
 
     def consultar_servidor(self, cert, key, versao=u'3.10', ambiente=2, estado=u'MG',
@@ -52,14 +53,12 @@ class nf_e(NotaFiscal):
         p.caminho = u''
         
         processo = p.consultar_servico()
-        status = processo.resposta.cStat.valor
         processo.envio.xml
         processo.resposta.xml
         processo.resposta.reason
 
-        return{'status': processo.resposta.cStat.valor, 'status_motivo': processo.resposta.xMotivo.valor, 
-                'envio': processo.envio.xml, 'resposta': processo.resposta.xml, 'reason': processo.resposta.reason}
-    
+        return processo
+        
     def gerar_xml(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG', salvar_arquivos=True):
         p = ProcessadorNFe()
         p.ambiente = ambiente
@@ -84,22 +83,9 @@ class nf_e(NotaFiscal):
             n.preencher_campos_nfe()
             
         processo =  p.gerar_xml([n])
-        '''
-        vals = {
-            'envio': processo.envio.xml,
-            'erros_validacao_envio': processo.envio.erros,
-            'alertas_validacao_envio': processo.envio.alertas,
-        }
-            
-        for i, nota in enumerate(processo.envio.NFe):
-            vals['chave_nfe_'+str(i)]  = nota.chave
-            vals['erros_validacao_nfe_'+str(i)] = nota.erros
-            vals['alertas_validacao_nfe_'+str(i)] = nota.alertas
-        '''
+
         return processo
         
-        
-    
     def processar_nota(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
                       contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
         """
@@ -139,32 +125,15 @@ class nf_e(NotaFiscal):
             processo.envio.xml
             processo.resposta.xml
             processo.resposta.reason
-            
-        vals = {'envio': processo.envio.xml,
-                'resposta': processo.resposta.xml,
-                'chave_nfe': n.chave,
-                'status_http': processo.resposta.status,
-                'status_resposta_lote': processo.resposta.cStat.valor,
-                'status_motivo_lote': processo.resposta.xMotivo.valor,
-                'reason': processo.resposta.reason
-        }
-        try:
-            if processo.resposta.infProt.nProt.valor == '':
-                vals['protocolo'] = processo.resposta.protNFe.infProt.nProt.valor
-        except:
-            pass
-
+        
+        processos = {}
+        processos['lote'] = processo
+        processos['notas'] = []
+        
         for nome, proc in p.processos.items():
-            vals['status_resposta_'+str(nome)]  = proc.protNFe.infProt.cStat.valor
-            vals['numero_protocolo_'+str(nome)] = proc.protNFe.infProt.nProt.valor
-            vals['status_motivo_'+str(nome)]    = proc.protNFe.infProt.xMotivo.valor
-            if salvar_arquivos and proc.protNFe.infProt.nProt.valor:
-                if consumidor:
-                    self.gerar_danfce(proc_nfce=proc.xml, salvar_arquivo=True)
-                else:
-                    self.gerar_danfe(proc_nfe=proc.xml, salvar_arquivo=True)
-                        
-        return vals
+            processos['notas'].append(proc)
+        
+        return processos
         
     def processar_lote(self, lista_xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
                        contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
@@ -212,27 +181,16 @@ class nf_e(NotaFiscal):
             processo.envio.xml
             processo.resposta.xml
             processo.resposta.reason
-            
-        vals = {
-            'envio': processo.envio.xml, 
-            'resposta': processo.resposta.xml,
-            'status_resposta_lote': processo.resposta.cStat.valor,
-            'status_motivo_lote': processo.resposta.xMotivo.valor,
-            'reason': processo.resposta.reason
-        }
-            
+        
+        processos = {}
+        processos['lote'] = processo
+        processos['notas'] = []
+        
         for nome, proc in p.processos.items():
-            vals['status_resposta_'+str(nome)]  = proc.protNFe.infProt.cStat.valor
-            vals['numero_protocolo_'+str(nome)] = proc.protNFe.infProt.nProt.valor
-            vals['status_motivo_'+str(nome)]    = proc.protNFe.infProt.xMotivo.valor
-            if salvar_arquivos and proc.protNFe.infProt.nProt.valor:
-                if consumidor:
-                    self.gerar_danfce(proc_nfce=proc.xml, salvar_arquivo=True)
-                else:
-                    self.gerar_danfe(proc_nfe=proc.xml, salvar_arquivo=True)
+            processos['notas'].append(proc)
 
-        return vals
-                
+        return processos
+        
     def consultar_recibo(self, numero_recibo, cert, key, versao=u'2.00', ambiente=2, estado=u'MG',
                        salvar_arquivos=True, n_tentativas=2):
                        
@@ -258,8 +216,10 @@ class nf_e(NotaFiscal):
             processo = p.consultar_recibo(ambiente=ambiente, numero_recibo=numero_recibo)
             tentativa += 1
             
-        return {'envio': processo.envio.xml, 'resposta': processo.resposta.xml,
-                'reason': processo.resposta.reason}
+        #return {'envio': processo.envio.xml, 'resposta': processo.resposta.xml,
+        #        'reason': processo.resposta.reason}
+        
+        return processo
 
 
     def cancelar_nota(self, chave, protocolo, justificativa, cert, key, data=None, versao=u'3.10',
@@ -285,8 +245,8 @@ class nf_e(NotaFiscal):
                                    justificativa=justificativa, data=data, numero_lote=numero_lote)
         processo.resposta.reason
         
-        return self.montar_vals_evento(processo)
-        
+        return processo
+                
     def emitir_carta_correcao(self, chave, texto_correcao, cert, key, sequencia=None, data=None, numero_lote=None,
                               versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False,
                               salvar_arquivos=True):
@@ -308,7 +268,7 @@ class nf_e(NotaFiscal):
                                    ambiente=ambiente,sequencia=sequencia, data=data, numero_lote=numero_lote)
         processo.resposta.reason
 
-        return self.montar_vals_evento(processo)
+        return processo
         
     def efetuar_manifesto(self, cnpj, tipo_manifesto, chave,  cert, key, ambiente_nacional=True, versao=u'3.10', ambiente=2,
                           estado=u'MG', contingencia=False, justificativa=None, salvar_arquivos=True):
@@ -336,7 +296,7 @@ class nf_e(NotaFiscal):
         
         processo = p.efetuar_manifesto_destinatario(cnpj=cnpj, tipo_manifesto=tipo_manifesto, chave_nfe=chave, justificativa=justificativa, ambiente_nacional=ambiente_nacional)
 
-        return self.montar_vals_evento(processo)
+        return processo
         
     def enviar_lote_evento(self, lista_eventos, tipo, cert, key, versao=u'3.10',
                       ambiente=2, estado=u'MG', contingencia=False, numero_lote=None, salvar_arquivos=True,
@@ -366,25 +326,7 @@ class nf_e(NotaFiscal):
             
         processo = p.enviar_lote_evento(tipo_evento=tipo, lista_eventos=lista_eventos, numero_lote=numero_lote)
         
-        return self.montar_vals_evento(processo)
-        
-    def montar_vals_evento(self, processo):
-        vals = {
-            'envio': processo.envio.xml, 
-            'resposta': processo.resposta.xml,
-            'status_resposta_lote': processo.resposta.cStat.valor,
-            'status_motivo_lote': processo.resposta.xMotivo.valor,
-            'reason': processo.resposta.reason
-        }
-        
-        ##Resposta de cada evento enviado
-        for i,ret in enumerate(processo.resposta.retEvento):
-            vals['status_resposta_'+str(i)]  = ret.infEvento.cStat.valor
-            vals['numero_protocolo_'+str(i)] = ret.infEvento.nProt.valor
-            vals['status_motivo_'+str(i)]    = ret.infEvento.xMotivo.valor
-            
-        return vals
-                
+        return processo    
 
     def inutilizar_nota(self, cnpj, serie, numero, justificativa, cert, key, nfce=False, versao=u'3.10',
                         ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
@@ -413,12 +355,8 @@ class nf_e(NotaFiscal):
         processo.envio.xml
         processo.resposta.xml
         processo.resposta.reason
-        vals = {'envio': processo.envio.xml,
-                'resposta': processo.resposta.xml,
-                'status_resposta': processo.resposta.infInut.cStat.valor,
-                'status_motivo': processo.resposta.infInut.xMotivo.valor,
-                'reason': processo.resposta.reason}
-        return vals
+        
+        return processo
                 
 
     def inutilizar_faixa_numeracao(self, cnpj, serie, numero_inicial, numero_final, justificativa,
@@ -450,16 +388,9 @@ class nf_e(NotaFiscal):
         processo.envio.xml
         processo.resposta.xml
         processo.resposta.reason
-        vals = {'envio': processo.envio.xml,
-                'resposta': processo.resposta.xml,
-                'status_resposta': processo.resposta.infInut.cStat.valor,
-                'status_motivo': processo.resposta.infInut.xMotivo.valor,
-                'reason': processo.resposta.reason}
-        if processo.resposta.infInut.cStat.valor == '102':
-            vals['protocolo'] = processo.resposta.infInut.nProt.valor
-
-        return vals
-
+        
+        return processo
+        
     def gerar_danfe(self, proc_nfe, retcan_nfe=None, site_emitente=u'', logo=u'',
                     nome_sistema=u'', leiaute_logo_vertical=False, versao='3.10', salvar_arquivo=False):
         """
@@ -603,14 +534,7 @@ class nf_e(NotaFiscal):
         p.salvar_arquivos = salvar_arquivos
         processo = p.consultar_nota(chave_nfe=chave)
         
-        vals = {'envio': processo.envio.xml,
-                'resposta': processo.resposta.xml,
-                'status_resposta': processo.resposta.cStat.valor,
-                'status_motivo': processo.resposta.xMotivo.valor,
-                'reason': processo.resposta.reason,
-        }
-        
-        return vals
+        return processo
 
     def consultar_cadastro(self, cert, key, cpf_cnpj=None, inscricao_estadual=None, versao=u'2.00',
                            ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
@@ -656,12 +580,8 @@ class nf_e(NotaFiscal):
         processo = p.consultar_cadastro_contribuinte(cpf_cnpj=cpf_cnpj,
                                                      inscricao_estadual=inscricao_estadual,
                                                      ambiente=ambiente)
-        vals = {'envio': processo.envio.xml,
-                'resposta': processo.resposta.xml,
-                'status_resposta': processo.resposta.infCons.cStat.valor,
-                'status_motivo': processo.resposta.infCons.xMotivo.valor,
-                'reason': processo.resposta.reason}
-        return vals
+                                                     
+        return processo
 
     def consultar_nfe_destinatario(self, cnpj, indnfe, indemi, cert, key, nsu='0', versao=u'3.10',
                                    ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
@@ -685,67 +605,9 @@ class nf_e(NotaFiscal):
         p.contingencia = contingencia
         p.salvar_arquivos = salvar_arquivos
         processo = p.consultar_notas_destinatario(cnpj=cnpj, indnfe=indnfe, indemi=indemi, nsu=nsu)
-        resp = processo.resposta
-        lista_notas = []
-        if resp.cStat.valor == '138':#Documento localizado para o destinatário
-            for resp in resp.ret:
-                if resp.resNFe.xml:
-                    dict_resnfe = {
-                        'NSU': resp.resNFe.NSU.valor,
-                        'chNFe': resp.resNFe.chNFe.valor,
-                        'CNPJ': resp.resNFe.CNPJ.valor,
-                        'CPF': resp.resNFe.CPF.valor,
-                        'xNome': resp.resNFe.xNome.valor,
-                        'IE': resp.resNFe.IE.valor,
-                        'dEmi': resp.resNFe.dEmi.valor,
-                        'tpNF': resp.resNFe.tpNF.valor,
-                        'vNF': resp.resNFe.vNF.valor,
-                        'digVal': resp.resNFe.digVal.valor,
-                        'dhRecbto': resp.resNFe.dhRecbto.valor,
-                        'cSitNFe': resp.resNFe.cSitNFe.valor,
-                        'cSitConf': resp.resNFe.cSitConf.valor
-                    }
-                    lista_notas.append({'resNFe': dict_resnfe})
-                if resp.resCanc.xml:
-                    dict_rescanc = {
-                        'NSU': resp.resCanc.NSU.valor,
-                        'chNFe': resp.resCanc.chNFe.valor,
-                        'CNPJ': resp.resCanc.CNPJ.valor,
-                        'CPF': resp.resCanc.CPF.valor,
-                        'xNome': resp.resCanc.xNome.valor,
-                        'IE': resp.resCanc.IE.valor,
-                        'dEmi': resp.resCanc.dEmi.valor,
-                        'tpNF': resp.resCanc.tpNF.valor,
-                        'vNF': resp.resCanc.vNF.valor,
-                        'digVal': resp.resCanc.digVal.valor,
-                        'dhRecbto': resp.resCanc.dhRecbto.valor,
-                        'cSitNFe': resp.resCanc.cSitNFe.valor,
-                        'cSitConf': resp.resCanc.cSitConf.valor
-                    }
-                    lista_notas.append({'resCanc': dict_rescanc})
-                if resp.resCCe.xml:
-                    dict_rescce = {
-                        'NSU': resp.resCCe.NSU.valor,
-                        'chNFe': resp.resCCe.chNFe.valor,
-                        'dhEvento': resp.resCCe.dhEvento.valor,
-                        'tpEvento': resp.resCCe.tpEvento.valor,
-                        'nSeqEvento': resp.resCCe.nSeqEvento.valor,
-                        'descEvento': resp.resCCe.descEvento.valor,
-                        'xCorrecao': resp.resCCe.xCorrecao.valor,
-                        'tpNF': resp.resCCe.tpNF.valor,
-                        'dhRecbto': resp.resCCe.dhRecbto.valor
-                    }
-                    lista_notas.append({'resCCe': dict_rescce})
-
-
-        vals = {'envio':processo.envio.xml,
-                'resposta': processo.resposta.xml,
-                'status_resposta': processo.resposta.cStat.valor,
-                'status_motivo': processo.resposta.xMotivo.valor,
-                'lista_notas': lista_notas,
-                'reason': processo.resposta.reason}
-
-        return vals
+        
+        return processo
+        
 
     def download_notas(self, cnpj, lista_chaves,  cert, key, ambiente_nacional=True, versao=u'2.00', ambiente=2, estado=u'MG',
                      contingencia=False, salvar_arquivos=True):
@@ -774,15 +636,5 @@ class nf_e(NotaFiscal):
         p.salvar_arquivos = salvar_arquivos
         
         processo = p.download_nfes(cnpj, ambiente, lista_chaves=lista_chaves)
-
-        vals = {'envio': processo.envio.xml,
-                'resposta': processo.resposta.xml,
-                'proc_xml':processo.resposta.original,
-                #'status_resposta': processo.resposta.retNFe.cStat.valor,
-                #'status_motivo': processo.resposta.retNFe.xMotivo.valor,
-                'reason': processo.resposta.reason}
-        for i,ret in enumerate(processo.resposta.retNFe):
-            vals['status_resp_nota_' + str(i)] = ret.cStat.valor
-            vals['status_motivo_nota_' + str(i)] = ret.xMotivo.valor
-
-        return vals
+        
+        return processo

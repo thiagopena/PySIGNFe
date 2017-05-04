@@ -847,6 +847,7 @@ class XMLNFe(NohXML):
     def __init__(self, *args, **kwargs):
         super(XMLNFe, self).__init__(*args, **kwargs)
         self._xml = None
+        self.erros = []
         self.alertas = []
         self.arquivo_esquema = None
         self.caminho_esquema = None

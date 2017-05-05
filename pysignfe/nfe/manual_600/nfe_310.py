@@ -1390,10 +1390,10 @@ class NFe(nfe_310.NFe):
     
     def preencher_campos_nfce(self):
         self.infNFe.ide.mod.valor = '65'
-        self.infNFe.ide.indFinal.valor = '1'
-        self.infNFe.dest.indIEDest.valor = '9'
+        #self.infNFe.ide.indFinal.valor = '1'
+        #self.infNFe.dest.indIEDest.valor = '9'
     
     def preencher_campos_nfe(self):
         self.infNFe.ide.mod.valor = '55'
-        self.infNFe.ide.indFinal.valor = '0'
+        #self.infNFe.ide.indFinal.valor = '0'
 

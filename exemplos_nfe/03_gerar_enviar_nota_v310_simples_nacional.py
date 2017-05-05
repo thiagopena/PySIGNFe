@@ -44,7 +44,7 @@ if __name__ == '__main__':
     #nfe.infNFe.ide.tpEmis.valor    = 1                         #Preenchido automaticamente 
     #nfe.infNFe.ide.tpAmb.valor     = 2                         #Preenchido automaticamente 
     nfe.infNFe.ide.finNFe.valor     = 1
-    #nfe.infNFe.ide.indFinal.valor  = 0                         #Preenchido automaticamente
+    nfe.infNFe.ide.indFinal.valor  = 0
     nfe.infNFe.ide.indPres.valor    = '1'
     nfe.infNFe.ide.procEmi.valor    = 0            
     #nfe.infNFe.ide.verProc.valor   = 'PySIGNFe'                #Preenchido automaticamente

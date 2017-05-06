@@ -59,7 +59,7 @@ class nf_e(NotaFiscal):
 
         return processo
         
-    def gerar_xml(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG', salvar_arquivos=True):
+    def gerar_xml(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG', salvar_arquivos=True, numero_lote=None):
         p = ProcessadorNFe()
         p.ambiente = ambiente
         p.estado = estado
@@ -68,6 +68,9 @@ class nf_e(NotaFiscal):
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
         p.caminho = u''
+        
+        if numero_lote is None:
+            numero_lote = datetime.now().strftime('%Y%m%d%H%M%S')
         
         if versao == '3.10':
             n = NFe_310()
@@ -82,12 +85,12 @@ class nf_e(NotaFiscal):
         else:
             n.preencher_campos_nfe()
             
-        processo =  p.gerar_xml([n])
+        processo =  p.gerar_xml([n], numero_lote=numero_lote)
 
         return processo
         
     def processar_nota(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
-                      contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
+                      contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True, numero_lote=None):
         """
         Este método realiza o processamento de validação, assinatura e transmissão da nfe.
         @param xml_nfe: xml da nfe (string)
@@ -108,6 +111,9 @@ class nf_e(NotaFiscal):
         p.numero_tentativas_consulta_recibo = n_consultas_recibo
         p.verificar_status_servico = consultar_servico
         
+        if numero_lote is None:
+            numero_lote = datetime.now().strftime('%Y%m%d%H%M%S')
+        
         if versao == '3.10':
             n = NFe_310()
         else:
@@ -121,12 +127,13 @@ class nf_e(NotaFiscal):
         else:
             n.preencher_campos_nfe()
         
-        for processo in p.processar_notas([n]):
+        for processo in p.processar_notas([n], numero_lote=numero_lote):
             processo.envio.xml
             processo.resposta.xml
             processo.resposta.reason
         
         processos = {}
+        processos['numero_lote'] = numero_lote
         processos['lote'] = processo
         processos['notas'] = []
         
@@ -136,7 +143,7 @@ class nf_e(NotaFiscal):
         return processos
         
     def processar_lote(self, lista_xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
-                       contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True):
+                       contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True, numero_lote=None):
         """
         Este método realiza o processamento de validação, assinatura e transmissão da nfe.
         @param lista_xml_nfe:lista nfe(strings ou objetos NFe)
@@ -156,6 +163,9 @@ class nf_e(NotaFiscal):
         p.caminho = u''
         p.numero_tentativas_consulta_recibo = n_consultas_recibo
         p.verificar_status_servico = consultar_servico
+        
+        if numero_lote is None:
+            numero_lote = datetime.now().strftime('%Y%m%d%H%M%S')
         
         if isinstance(lista_xml_nfe[0], basestring) and lista_xml_nfe:
             lista_nfe = []
@@ -177,12 +187,13 @@ class nf_e(NotaFiscal):
         else:
             lista_nfe = lista_xml_nfe
         
-        for processo in p.processar_notas(lista_nfe):
+        for processo in p.processar_notas(lista_nfe, numero_lote=numero_lote):
             processo.envio.xml
             processo.resposta.xml
             processo.resposta.reason
         
         processos = {}
+        processos['numero_lote'] = numero_lote
         processos['lote'] = processo
         processos['notas'] = []
         

@@ -808,9 +808,6 @@ class ProcessadorNFe(object):
     def gerar_xml(self, lista_nfes, numero_lote=None):
         novos_arquivos = []
         
-        if numero_lote is None:
-            numero_lote = datetime.now().strftime('%Y%m%d%H%M%S')
-            
         nfe = lista_nfes[0]
         nfe.monta_chave()
         ambiente = nfe.infNFe.ide.tpAmb.valor
@@ -857,9 +854,6 @@ class ProcessadorNFe(object):
         #
         self.processos = processos = OrderedDict()
         novos_arquivos = []
-        
-        if numero_lote is None:
-            numero_lote = datetime.now().strftime('%Y%m%d%H%M%S')
 
         caminho_original = self.caminho
         nfe = lista_nfes[0]

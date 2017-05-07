@@ -30,7 +30,7 @@ FILE_DIR = abspath(dirname(__file__))
 class nf_e(NotaFiscal):
 
     def consultar_servidor(self, cert, key, versao=u'3.10', ambiente=2, estado=u'MG',
-                           contingencia=False, salvar_arquivos=True):
+                           contingencia=False, salvar_arquivos=True, caminho=u''):
         """
         Este método verifica se o servidor está em operação
         @param cert: string do certificado digital A1,
@@ -50,7 +50,7 @@ class nf_e(NotaFiscal):
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
         p.contingencia = contingencia
-        p.caminho = u''
+        p.caminho = caminho
         
         processo = p.consultar_servico()
         processo.envio.xml
@@ -59,7 +59,7 @@ class nf_e(NotaFiscal):
 
         return processo
         
-    def gerar_xml(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG', salvar_arquivos=True, numero_lote=None):
+    def gerar_xml(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG', salvar_arquivos=True, numero_lote=None, caminho=u''):
         p = ProcessadorNFe()
         p.ambiente = ambiente
         p.estado = estado
@@ -67,7 +67,7 @@ class nf_e(NotaFiscal):
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
-        p.caminho = u''
+        p.caminho = caminho
         
         if numero_lote is None:
             numero_lote = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -90,7 +90,7 @@ class nf_e(NotaFiscal):
         return processo
         
     def processar_nota(self, xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
-                      contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True, numero_lote=None):
+                      contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True, numero_lote=None, caminho=u''):
         """
         Este método realiza o processamento de validação, assinatura e transmissão da nfe.
         @param xml_nfe: xml da nfe (string)
@@ -107,7 +107,7 @@ class nf_e(NotaFiscal):
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
         p.contingencia = contingencia
-        p.caminho = u''
+        p.caminho = caminho
         p.numero_tentativas_consulta_recibo = n_consultas_recibo
         p.verificar_status_servico = consultar_servico
         
@@ -143,7 +143,7 @@ class nf_e(NotaFiscal):
         return processos
         
     def processar_lote(self, lista_xml_nfe, cert, key, versao=u'3.10', consumidor=False, ambiente=2, estado=u'MG',
-                       contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True, numero_lote=None):
+                       contingencia=False, salvar_arquivos=True, n_consultas_recibo=2, consultar_servico=True, numero_lote=None, caminho=u''):
         """
         Este método realiza o processamento de validação, assinatura e transmissão da nfe.
         @param lista_xml_nfe:lista nfe(strings ou objetos NFe)
@@ -160,7 +160,7 @@ class nf_e(NotaFiscal):
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
-        p.caminho = u''
+        p.caminho = caminho
         p.numero_tentativas_consulta_recibo = n_consultas_recibo
         p.verificar_status_servico = consultar_servico
         
@@ -203,7 +203,7 @@ class nf_e(NotaFiscal):
         return processos
         
     def consultar_recibo(self, numero_recibo, cert, key, versao=u'2.00', ambiente=2, estado=u'MG',
-                       salvar_arquivos=True, n_tentativas=2):
+                       salvar_arquivos=True, n_tentativas=2, caminho=u''):
                        
         """
         Este método retorna o resultado do processamento do lote enviado.
@@ -218,7 +218,7 @@ class nf_e(NotaFiscal):
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
-        p.caminho = u''
+        p.caminho = caminho
         
         tentativa = 0
         processo = p.consultar_recibo(ambiente=ambiente, numero_recibo=numero_recibo)
@@ -234,7 +234,7 @@ class nf_e(NotaFiscal):
 
 
     def cancelar_nota(self, chave, protocolo, justificativa, cert, key, data=None, versao=u'3.10',
-                      ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True, numero_lote=None):
+                      ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True, numero_lote=None, caminho=u''):
         """
         Realiza o cancelamento da nfe.
         @param chave:chave da nfe
@@ -248,6 +248,7 @@ class nf_e(NotaFiscal):
         p.estado = estado
         p.ambiente = ambiente
         p.contingencia = contingencia
+        p.caminho = caminho
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
@@ -260,7 +261,7 @@ class nf_e(NotaFiscal):
                 
     def emitir_carta_correcao(self, chave, texto_correcao, cert, key, sequencia=None, data=None, numero_lote=None,
                               versao=u'3.10', ambiente=2, estado=u'MG', contingencia=False,
-                              salvar_arquivos=True):
+                              salvar_arquivos=True, caminho=u''):
         """
         @param chave:chave da nfe
         @param texto_correcao: correção a ser considerada, texto livre
@@ -270,6 +271,7 @@ class nf_e(NotaFiscal):
         p.versao = versao
         p.estado = estado
         p.ambiente = ambiente
+        p.caminho = caminho
         p.certificado.cert_str = cert
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
@@ -282,7 +284,7 @@ class nf_e(NotaFiscal):
         return processo
         
     def efetuar_manifesto(self, cnpj, tipo_manifesto, chave,  cert, key, ambiente_nacional=True, versao=u'3.10', ambiente=2,
-                          estado=u'MG', contingencia=False, justificativa=None, salvar_arquivos=True):
+                          estado=u'MG', contingencia=False, justificativa=None, salvar_arquivos=True, caminho=u''):
         """
         Realiza o manifesto do destinatário
         @param tipo_manifesto: Confirmação da Operação, Desconhecimento da Operação, Operação Não Realizada ou Ciência da Emissão
@@ -292,6 +294,7 @@ class nf_e(NotaFiscal):
         p = ProcessadorNFe()
         p.versao = versao
         p.estado = estado
+        p.caminho = caminho
 
         if ambiente_nacional:
             if versao == '3.10':
@@ -311,7 +314,7 @@ class nf_e(NotaFiscal):
         
     def enviar_lote_evento(self, lista_eventos, tipo, cert, key, versao=u'3.10',
                       ambiente=2, estado=u'MG', contingencia=False, numero_lote=None, salvar_arquivos=True,
-                      ambiente_nacional=False):
+                      ambiente_nacional=False, caminho=u''):
         """
         Envia um lote de eventos (cancelamento, correcao, manifestacao ou epec)
         @param lista_eventos: lista com eventos (todos os eventos devem ser do mesmo tipo)
@@ -319,6 +322,7 @@ class nf_e(NotaFiscal):
         p = ProcessadorNFe()
         p.versao = versao
         p.estado = estado
+        p.caminho = caminho
         p.ambiente = ambiente
         p.contingencia = contingencia
         p.certificado.cert_str = cert
@@ -340,7 +344,7 @@ class nf_e(NotaFiscal):
         return processo    
 
     def inutilizar_nota(self, cnpj, serie, numero, justificativa, cert, key, nfce=False, versao=u'3.10',
-                        ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
+                        ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True, caminho=u''):
         """
         Realiza a inutilização do número de uma nota fiscal
         @param cnpj:cnpj do emitente
@@ -358,7 +362,7 @@ class nf_e(NotaFiscal):
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
         p.contingencia = contingencia
-        p.caminho = u''
+        p.caminho = caminho
         p.nfce = nfce
         
         processo = p.inutilizar_nota(cnpj=cnpj, serie=serie, numero_inicial=numero,
@@ -372,7 +376,7 @@ class nf_e(NotaFiscal):
 
     def inutilizar_faixa_numeracao(self, cnpj, serie, numero_inicial, numero_final, justificativa,
                                    cert, key, nfce=False, versao=u'2.00', ambiente=2, estado=u'MG',
-                                   contingencia=False, salvar_arquivos=True):
+                                   contingencia=False, salvar_arquivos=True, caminho=u''):
         """
         Realiza a inutilização de faixa de numeração de nota fiscal
         @param cnpj:cnpj do emitente
@@ -391,7 +395,7 @@ class nf_e(NotaFiscal):
         p.certificado.key_str = key
         p.salvar_arquivos = salvar_arquivos
         p.contingencia = contingencia
-        p.caminho = u''
+        p.caminho = caminho
         p.nfce = nfce
         
         processo = p.inutilizar_nota(cnpj=cnpj, serie=serie, numero_inicial=numero_inicial,
@@ -529,7 +533,7 @@ class nf_e(NotaFiscal):
         return res
 
     def consultar_nfe(self, chave, cert, key, versao=u'3.10', ambiente=2, estado=u'MG',
-                      contingencia=False, salvar_arquivos=True):
+                      contingencia=False, salvar_arquivos=True, caminho=u''):
         """
         Consultar a situaçao da NF-e
         @param chave:chave da nfe
@@ -538,6 +542,7 @@ class nf_e(NotaFiscal):
         p = ProcessadorNFe()
         p.versao = versao
         p.estado = estado
+        p.caminho = caminho
         p.ambiente = ambiente
         p.certificado.cert_str = cert
         p.certificado.key_str = key
@@ -548,7 +553,7 @@ class nf_e(NotaFiscal):
         return processo
 
     def consultar_cadastro(self, cert, key, cpf_cnpj=None, inscricao_estadual=None, versao=u'2.00',
-                           ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
+                           ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True, caminho=u''):
         """
         Consulta cadastro do contribuinte
         @param cpf_cnpj: CPF ou CNPJ do contribuinte
@@ -561,6 +566,8 @@ class nf_e(NotaFiscal):
         p = ProcessadorNFe()
         p.versao = versao
         p.estado = estado
+        p.caminho = caminho
+        
         if estado in ('AC', 'AL', 'AP', 'DF', 'ES', 'PB', 'RJ', 'RN', 'RO', 'RR', 'SC',
                   'SE', 'TO'):
             #SVRS[NFE_AMBIENTE_PRODUCAO][u'servidor'] = u'svp-ws.sefazvirtual.rs.gov.br'
@@ -595,7 +602,7 @@ class nf_e(NotaFiscal):
         return processo
 
     def consultar_nfe_destinatario(self, cnpj, indnfe, indemi, cert, key, nsu='0', versao=u'3.10',
-                                   ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True):
+                                   ambiente=2, estado=u'MG', contingencia=False, salvar_arquivos=True, caminho=u''):
         """
         Realiza  a consulta do manifesto do destinatário
         @return: Dicionário com o envio,resposta e reason.
@@ -603,6 +610,7 @@ class nf_e(NotaFiscal):
         p = ProcessadorNFe()
         p.versao = versao
         p.estado = estado
+        p.caminho = caminho
         #Provisoriamente apontado para um estado que usa o webservice de ambiente nacional, pois em MG ainda
         # não existe suporte ao Manifesto do Destinatário
         if versao == '3.10':
@@ -621,7 +629,7 @@ class nf_e(NotaFiscal):
         
 
     def download_notas(self, cnpj, lista_chaves,  cert, key, ambiente_nacional=True, versao=u'2.00', ambiente=2, estado=u'MG',
-                     contingencia=False, salvar_arquivos=True):
+                     contingencia=False, salvar_arquivos=True, caminho=u''):
         """
         Realiza download de NFe para uma determinada chave de acesso, para NF-e confirmada pelo destinatario.
         @param lista_chaves: lista de até 10 chaves
@@ -633,6 +641,7 @@ class nf_e(NotaFiscal):
         p = ProcessadorNFe()
         p.versao = versao
         p.estado = estado
+        p.caminho = caminho
         if ambiente_nacional:
             if versao == '3.10':
                 #ESTADO_WS3[estado] = SVAN3

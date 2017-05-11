@@ -39,6 +39,7 @@ class InfConsEnviado(XMLNFe):
 
 class ConsCad(XMLNFe):
     def __init__(self):
+        super(ConsCad, self).__init__()
         self.versao = TagDecimal(nome=u'ConsCad', codigo=u'GP01', propriedade=u'versao', namespace=NAMESPACE_NFE, valor=u'2.00', raiz=u'/')
         self.infCons = InfConsEnviado()
         self.caminho_esquema = os.path.join(DIRNAME, u'schema/', ESQUEMA_ATUAL + u'/')
@@ -62,6 +63,7 @@ class ConsCad(XMLNFe):
 
 class Ender(XMLNFe):
     def __init__(self):
+        super(Ender, self).__init__()
         self.xLgr    = TagCaracter(nome=u'xLgr'   , codigo=u'GR23', tamanho=[1, 255] , raiz=u'//infCad/ender', obrigatorio=False)
         self.nro     = TagCaracter(nome=u'nro'    , codigo=u'GR24', tamanho=[1, 60]  , raiz=u'//infCad/ender', obrigatorio=False)
         self.xCpl    = TagCaracter(nome=u'xCpl'   , codigo=u'GR25', tamanho=[1, 60]  , raiz=u'//infCad/ender', obrigatorio=False)

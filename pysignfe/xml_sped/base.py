@@ -273,7 +273,8 @@ class TagCaracter(NohXML):
             #
             novo_valor = novo_valor.strip()
 
-        if self._valida(novo_valor):
+        ##Alguns casos em que xMotivo ultrapassa 255 caracteres
+        if self._valida(novo_valor) or self.nome == 'xMotivo':
             self._valor_string = tirar_acentos(novo_valor)
         else:
             self._valor_string = u''

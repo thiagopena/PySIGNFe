@@ -274,7 +274,8 @@ class TagCaracter(NohXML):
             novo_valor = novo_valor.strip()
 
         ##Alguns casos em que xMotivo ultrapassa 255 caracteres
-        if self._valida(novo_valor) or self.nome == 'xMotivo':
+        #Correcao:  nao restringir tamanho de tags de texto
+        if self._valida(novo_valor) or self.nome.startswith('x'):
             self._valor_string = tirar_acentos(novo_valor)
         else:
             self._valor_string = u''

@@ -643,7 +643,7 @@ class ProcessadorNFe(object):
         if ano is None:
             ano = datetime.now().strftime(u'%y')
 
-        if numero_final is None:
+        if not numero_final:
             numero_final = numero_inicial
 
         self.caminho = self.monta_caminho_inutilizacao(ambiente=ambiente, serie=serie,

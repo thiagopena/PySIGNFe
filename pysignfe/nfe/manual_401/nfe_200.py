@@ -1777,7 +1777,6 @@ class NFe(nfe_110.NFe):
         self.arquivo_esquema = u'nfe_v2.00.xsd'
 
     def gera_nova_chave(self):
-            
         super(NFe, self).gera_nova_chave()
         
         #

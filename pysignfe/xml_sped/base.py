@@ -219,6 +219,7 @@ class TagCaracter(NohXML):
         self.namespace_obrigatorio = True
         self.alertas = []
         self.raiz = None
+        self.cdata = False
 
         # Codigo para dinamizar a criacao de instancias de entidade,
         # aplicando os valores dos atributos na instanciacao
@@ -248,14 +249,19 @@ class TagCaracter(NohXML):
     def _valida(self, valor):
         self.alertas = []
 
-        if self._testa_obrigatorio(valor):
-            self.alertas.append(self._testa_obrigatorio(valor))
+        v = valor
+        if self.cdata:
+            v = valor.replace('<![CDATA[', '')
+            v = v.replace(']]>', '')
 
-        if self._testa_tamanho_minimo(valor):
-            self.alertas.append(self._testa_tamanho_minimo(valor))
+        if self._testa_obrigatorio(v):
+            self.alertas.append(self._testa_obrigatorio(v))
 
-        if self._testa_tamanho_maximo(valor):
-            self.alertas.append(self._testa_tamanho_maximo(valor))
+        if self._testa_tamanho_minimo(v):
+            self.alertas.append(self._testa_tamanho_minimo(v))
+
+        if self._testa_tamanho_maximo(v):
+            self.alertas.append(self._testa_tamanho_maximo(v))
 
         return self.alertas == []
 
@@ -276,7 +282,10 @@ class TagCaracter(NohXML):
         ##Alguns casos em que xMotivo ultrapassa 255 caracteres
         #Correcao:  nao restringir tamanho de tags de texto
         if self._valida(novo_valor) or self.nome.startswith('x'):
-            self._valor_string = tirar_acentos(novo_valor)
+            if self.cdata:
+                self._valor_string = unicode(novo_valor)
+            else:
+                self._valor_string = unicode(tirar_acentos(novo_valor))
         else:
             self._valor_string = u''
 
@@ -298,7 +307,10 @@ class TagCaracter(NohXML):
             if self.propriedade:
                 texto += u' %s="%s">' % (self.propriedade, self._valor_string)
             elif self.valor or (len(self.tamanho) == 3 and self.tamanho[2]):
-                texto += u'>%s</%s>' % (self._valor_string, self.nome)
+                if self.cdata:
+                    texto += '><![CDATA[%s]]></%s>' % (self._valor_string, self.nome)
+                else:
+                    texto += u'>%s</%s>' % (self._valor_string, self.nome)
             else:
                 texto += u' />'
 

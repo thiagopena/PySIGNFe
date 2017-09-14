@@ -2,7 +2,6 @@
 
 from pysignfe.corr_unicode import *
 from pysignfe.xml_sped import *
-#from soap_100 import SOAPEnvio, SOAPRetorno, conectar_servico
 from pysignfe.nfe.manual_401 import ESQUEMA_ATUAL
 from pysignfe.nfe.manual_300 import nfe_110
 import os

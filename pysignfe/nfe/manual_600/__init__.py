@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-ESQUEMA_ATUAL = u'PL_008i2'
+ESQUEMA_ATUAL = u'pl_008i2'
 
 #
 # Envelopes SOAP

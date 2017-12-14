@@ -5,10 +5,6 @@ from datetime import datetime
 from pysignfe.xml_sped import *
 import lxml
 
-##Modificado para utilizar o signxml ao inves do libxml2 e xmlsec
-from signxml import XMLSigner, XMLVerifier
-from signxml import methods
-
 
 class Certificado(object):
     def __init__(self):
@@ -127,6 +123,10 @@ class Certificado(object):
         return chave_de_acesso
         
     def assina_xml(self, xml):
+        ##Modificado para utilizar o signxml ao inves do libxml2 e xmlsec
+        from signxml import XMLSigner
+        from signxml import methods
+
         xml = self._prepara_doc_xml(xml)
         doc_xml = lxml.etree.fromstring(xml.encode('utf-8'))
         

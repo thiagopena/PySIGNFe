@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from http.client import HTTPSConnection, HTTPResponse
 #from OpenSSL import crypto
 import socket
 import ssl
@@ -74,18 +73,6 @@ class ProcessoNFe(object):
         self.webservice = webservice
         self.envio = envio
         self.resposta = resposta
-
-class ConexaoHTTPS(HTTPSConnection):
-    def connect(self):
-        "Connect to a host on a given (SSL) port."
-
-        sock = socket.create_connection((self.host, self.port),
-                                        self.timeout, self.source_address)
-        if self._tunnel_host:
-            self.sock = sock
-            self._tunnel()
-        self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file,
-                                    ssl_version=ssl.PROTOCOL_SSLv3)
 
 
 class ProcessadorNFe(object):
@@ -177,6 +164,7 @@ class ProcessadorNFe(object):
         
         print("  servidor: ", self._servidor)
         print("  url: ", self._url)
+        from http.client import HTTPSConnection
         con = HTTPSConnection(self._servidor, key_file=nome_arq_chave, cert_file=nome_arq_certificado)
         #con = ConexaoHTTPS(self._servidor, key_file=nome_arq_chave, cert_file=nome_arq_certificado)
         con.request(u'POST', u'/' + self._url, self._soap_envio.xml.encode(u'utf-8'), self._soap_envio.header)

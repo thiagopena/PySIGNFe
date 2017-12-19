@@ -670,12 +670,12 @@ class TransporteRetrato(BandaDANFE):
         self.inclui_descritivo(nome='clc', titulo=u'TRANSPORTADOR/VOLUMES TRANSPORTADOS', top=0*cm, left=0*cm, width=19.4*cm)
 
         # 1ª linha
-        lbl, fld = self.inclui_campo(nome='trn_nome', titulo=u'NOME/RAZÃO SOCIAL', conteudo='NFe.infNFe.transp.transporta.xNome.valor', top=0.42*cm, left=0*cm, width=9.55*cm)
-        lbl, fld = self.inclui_campo(nome='trn_frete', titulo=u'FRETE POR CONTA', conteudo='NFe.frete_formatado', top=0.42*cm, left=9.55*cm, width=2.8*cm)
-        lbl, fld = self.inclui_campo(nome='trn_antt', titulo=u'CÓDIGO ANTT', conteudo='NFe.infNFe.transp.veicTransp.RNTC.valor', top=0.42*cm, left=12.35*cm, width=1.5*cm)
-        lbl, fld = self.inclui_campo(nome='trn_placa', titulo=u'PLACA DO VEÍCULO', conteudo=u'NFe.placa_veiculo_formatada', top=0.42*cm, left=13.85*cm, width=1.85*cm)
-        lbl, fld = self.inclui_campo(nome='trn_vei_uf', titulo=u'UF', conteudo='NFe.infNFe.transp.veicTransp.UF.valor', top=0.42*cm, left=15.7*cm, width=0.7*cm)
-        lbl, fld = self.inclui_campo(nome='trn_cnpj', titulo=u'CNPJ/CPF', conteudo=u'NFe.cnpj_transportadora_formatado', top=0.42*cm, left=16.4*cm, width=3*cm, margem_direita=True)
+        lbl, fld = self.inclui_campo(nome='trn_nome', titulo=u'NOME/RAZÃO SOCIAL', conteudo='NFe.infNFe.transp.transporta.xNome.valor', top=0.42*cm, left=0*cm, width=9.02*cm)
+        lbl, fld = self.inclui_campo(nome='trn_frete', titulo=u'FRETE POR CONTA', conteudo='NFe.frete_formatado', top=0.42*cm, left=9.02*cm, width=2.8*cm)
+        lbl, fld = self.inclui_campo(nome='trn_antt', titulo=u'CÓDIGO ANTT', conteudo='NFe.infNFe.transp.veicTransp.RNTC.valor', top=0.42*cm, left=11.82*cm, width=1.5*cm)
+        lbl, fld = self.inclui_campo(nome='trn_placa', titulo=u'PLACA DO VEÍCULO', conteudo=u'NFe.placa_veiculo_formatada', top=0.42*cm, left=13.32*cm, width=1.85*cm)
+        lbl, fld = self.inclui_campo(nome='trn_vei_uf', titulo=u'UF', conteudo='NFe.infNFe.transp.veicTransp.UF.valor', top=0.42*cm, left=15.17*cm, width=0.7*cm)
+        lbl, fld = self.inclui_campo(nome='trn_cnpj', titulo=u'CNPJ/CPF', conteudo=u'NFe.cnpj_transportadora_formatado', top=0.42*cm, left=15.87*cm, width=3.53*cm, margem_direita=True)
 
         # 2ª linha
         lbl, fld = self.inclui_campo(nome='trn_end', titulo=u'ENDEREÇO', conteudo='NFe.infNFe.transp.transporta.xEnder.valor', top=1.12*cm, left=0*cm, width=9.75*cm)

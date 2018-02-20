@@ -517,7 +517,7 @@ class DestinatarioRetrato(BandaDANFE):
         lbl, fld = self.inclui_campo(nome='remetente_nome', titulo=u'NOME/RAZÃO SOCIAL', conteudo=u'NFe.infNFe.dest.xNome.valor', top=0.42*cm, left=0*cm, width=13.95*cm)
         lbl, fld = self.inclui_campo(nome='remetente_cnpj', titulo=u'CNPJ/CPF', conteudo=u'NFe.cnpj_destinatario_formatado', top=0.42*cm, left=13.95*cm, width=3.26*cm)
         fld.style = DADO_CAMPO_NEGRITO
-        lbl, fld = self.inclui_campo(nome='remetente_data_emissao', titulo=u'DATA DA EMISSÃO', conteudo=u'NFe.infNFe.ide.dEmi.formato_danfe', top=0.42*cm, left=17.2*cm, width=2.2*cm, margem_direita=True)
+        lbl, fld = self.inclui_campo(nome='remetente_data_emissao', titulo=u'DATA DA EMISSÃO',conteudo=u'NFe.infNFe.ide.dhEmi.formato_danfe', top=0.42*cm, left=17.2*cm, width=2.2*cm, margem_direita=True)
         fld.style = DADO_CAMPO_NEGRITO
 
 
@@ -527,7 +527,7 @@ class DestinatarioRetrato(BandaDANFE):
         lbl, fld = self.inclui_campo(nome='remetente_nome', titulo=u'ENDEREÇO', conteudo=u'NFe.endereco_destinatario_formatado', top=1.12*cm, left=0*cm, width=10.9*cm)
         lbl, fld = self.inclui_campo(nome='remetente_bairro', titulo=u'BAIRRO/DISTRITO', conteudo=u'NFe.infNFe.dest.enderDest.xBairro.valor', top=1.12*cm, left=10.9*cm, width=4.5*cm)
         lbl, fld = self.inclui_campo(nome='remetente_cep', titulo=u'CEP', conteudo=u'NFe.cep_destinatario_formatado', top=1.12*cm, left=15.4*cm, width=1.8*cm)
-        lbl, fld = self.inclui_campo(nome='remetente_data_entradasaida', titulo=u'DATA DA ENTRADA/SAÍDA', conteudo=u'NFe.infNFe.ide.dSaiEnt.formato_danfe', top=1.12*cm, left=17.2*cm, width=2.2*cm, margem_direita=True)
+        lbl, fld = self.inclui_campo(nome='remetente_data_entradasaida', titulo=u'DATA DA ENTRADA/SAÍDA', conteudo=u'NFe.infNFe.ide.dhSaiEnt.formato_danfe', top=1.12*cm, left=17.2*cm, width=2.2*cm, margem_direita=True)
         fld.style = DADO_CAMPO_NEGRITO
 
 

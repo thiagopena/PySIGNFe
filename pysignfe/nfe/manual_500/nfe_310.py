@@ -1450,11 +1450,9 @@ class Ide(nfe_200.Ide):
     def __init__(self):
         super(Ide, self).__init__()
         self.mod     = TagInteiro(nome=u'mod'     , codigo=u'B06', tamanho=[ 2,  2, 2], raiz=u'//NFe/infNFe/ide')
-        # A tag dEmi nao sera mais utilizada agora sera a dhEmi
-        #self.dEmi    = TagData(nome=u'dEmi'       , codigo=u'B09',                      raiz=u'//NFe/infNFe/ide',obrigatorio=False)
-        self.dhEmi     = TagDataHoraUTC(nome=u'dhEmi'       , codigo=u'B09',                   raiz=u'//NFe/infNFe/ide')
-        self.dhSaiEnt  = TagDataHoraUTC(nome=u'dhSaiEnt'       , codigo=u'B10',                raiz=u'//NFe/infNFe/ide', obrigatorio=False)
-        self.hSaiEnt   = TagDataHoraUTC(nome=u'hSaiEnt'    , codigo=u'B10a',                   raiz=u'//NFe/infNFe/ide', obrigatorio=False)
+        self.dhEmi     = TagData(nome=u'dhEmi'       , codigo=u'B09',                   raiz=u'//NFe/infNFe/ide')
+        self.dhSaiEnt  = TagData(nome=u'dhSaiEnt'       , codigo=u'B10',                raiz=u'//NFe/infNFe/ide', obrigatorio=False)
+        self.hSaiEnt   = TagHora(nome=u'dhSaiEnt'    , codigo=u'B10a',                   raiz=u'//NFe/infNFe/ide', obrigatorio=False)
         self.idDest    = TagInteiro(nome=u'idDest'      , codigo=u'B11a', tamanho=[ 1,  1, 1], raiz=u'//NFe/infNFe/ide', valor=1)
         self.indFinal  = TagCaracter(nome=u'indFinal'   , codigo=u'B25a',                      raiz=u'//NFe/infNFe/ide', valor=u'0')
         self.indPres   = TagCaracter(nome=u'indPres'    , codigo=u'B25b',                      raiz=u'//NFe/infNFe/ide', valor=u'9')
@@ -1804,7 +1802,3 @@ class NFe(nfe_200.NFe):
         v_tot = self.infNFe.total.ICMSTot.vTotTrib.valor
         t_tot += u'R$' + locale.format(u'%.2f', v_tot, 1)
         return t_tot
-        
-        
-        
-        

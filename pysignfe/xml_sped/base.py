@@ -452,7 +452,9 @@ class TagData(TagCaracter):
     def set_valor(self, novo_valor):
         if isinstance(novo_valor, basestring):
             if novo_valor:
-                novo_valor = datetime.strptime(novo_valor, u'%Y-%m-%d')
+                # O valor pode vir como a hora e tz também 
+                #(Ex: '2018-01-01T10:50:12-03:00)
+                novo_valor = datetime.strptime(novo_valor[:10], u'%Y-%m-%d')
             else:
                 novo_valor = None
 
@@ -482,7 +484,9 @@ class TagHora(TagData):
     def set_valor(self, novo_valor):
         if isinstance(novo_valor, basestring):
             if novo_valor:
-                novo_valor = datetime.strptime(novo_valor, u'%H:%M:%S')
+                # O valor pode vir como a hora e tz também.
+                # (Ex: '2018-01-01T10:50:12-03:00')
+                novo_valor = datetime.strptime(novo_valor[11:19], u'%H:%M:%S')
             else:
                 novo_valor = None
 

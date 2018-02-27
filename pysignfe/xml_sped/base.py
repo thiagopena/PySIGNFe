@@ -32,7 +32,7 @@ import os
 import unicodedata
 import re
 import pytz
-from time import strftime
+from time import timezone
 
 NAMESPACE_NFE  = u'http://www.portalfiscal.inf.br/nfe'
 NAMESPACE_SIG  = u'http://www.w3.org/2000/09/xmldsig#'
@@ -1019,7 +1019,7 @@ def somente_ascii(funcao):
     
     
 def fuso_horario_sistema():
-    diferenca = int(strftime('%z')) // 100
+    diferenca = timezone / -3600
 
     if diferenca < 0:
         return pytz.timezone('Etc/GMT+' + str(diferenca * -1))

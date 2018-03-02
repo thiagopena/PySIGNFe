@@ -1015,7 +1015,7 @@ def somente_ascii(funcao):
     
     
 def fuso_horario_sistema():
-    diferenca = timezone / -3600
+    diferenca = timezone // -3600
 
     if diferenca < 0:
         return pytz.timezone('Etc/GMT+' + str(diferenca * -1))

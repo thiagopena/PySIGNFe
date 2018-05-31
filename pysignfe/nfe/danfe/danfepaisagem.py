@@ -529,7 +529,7 @@ class DestinatarioPaisagem(BandaDANFE):
         lbl = self.inclui_descritivo(nome='remetente', titulo=u'DESTINATÁRIO/REMETENTE', top=0*cm, left=2.6*cm, width=26.8*cm, height=0.4*cm)
         
         # 1ª linha
-        lbl, fld = self.inclui_campo(nome='remetente_nome', titulo=u'NOME/RAZÃO SOCIAL', conteudo=u'NFe.infNFe.dest.xNome.valor', top=0.4*cm, left=2.6*cm, width=17*cm, height=0.6*cm)
+        lbl, fld = self.inclui_campo(nome='remetente_nome', titulo=u'NOME/RAZÃO SOCIAL', conteudo=u'NFe.nome_destinatario_formatado', top=0.4*cm, left=2.6*cm, width=17*cm, height=0.6*cm)
         fld.padding_top = 0.18*cm
         lbl, fld = self.inclui_campo(nome='remetente_cnpj', titulo=u'CNPJ/CPF', conteudo=u'NFe.cnpj_destinatario_formatado', top=0.4*cm, left=19.6*cm, width=6*cm, height=0.6*cm)
         fld.padding_top = 0.18*cm

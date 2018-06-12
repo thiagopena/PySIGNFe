@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+try:
+    # Python 2
+    from HTMLParser import HTMLParser
+    parser = HTMLParser()
+except ImportError:
+    # Python 3
+    import html as parser
 
 from pysignfe.corr_unicode import *
 from pysignfe.xml_sped import *
@@ -1539,7 +1546,7 @@ class Det(XMLNFe):
             formatado += u'<br />'
             formatado += self.infAdProd.valor.replace(u'|', u'<br />')
 
-        return formatado
+        return parser.unescape(formatado)
 
     def cst_formatado(self):
         formatado = unicode(self.imposto.ICMS.orig.valor).zfill(1)
@@ -3006,7 +3013,7 @@ class NFe(XMLNFe):
         if len(self.infNFe.emit.enderEmit.xCpl.valor.strip()):
             formatado += u' - ' + self.infNFe.emit.enderEmit.xCpl.valor
 
-        return formatado
+        return parser.unescape(formatado)
 
     def _formata_cep(self, cep):
         if not len(cep.strip()):
@@ -3020,13 +3027,13 @@ class NFe(XMLNFe):
     def endereco_emitente_formatado_linha_1(self):
         formatado = self.endereco_emitente_formatado()
         formatado += u' - ' + self.infNFe.emit.enderEmit.xBairro.valor
-        return formatado
+        return parser.unescape(formatado)
 
     def endereco_emitente_formatado_linha_2(self):
         formatado = self.infNFe.emit.enderEmit.xMun.valor
         formatado += u' - ' + self.infNFe.emit.enderEmit.UF.valor
         formatado += u' - ' + self.cep_emitente_formatado()
-        return formatado
+        return parser.unescape(formatado)
 
     def endereco_emitente_formatado_linha_3(self):
         formatado = u'Fone: ' + self.fone_emitente_formatado()
@@ -3051,6 +3058,9 @@ class NFe(XMLNFe):
     def fone_emitente_formatado(self):
         return self._formata_fone(unicode(self.infNFe.emit.enderEmit.fone.valor))
 
+    def nome_destinatario_formatado(self):
+        return parser.unescape(self.infNFe.dest.xNome.valor)
+
     def cnpj_destinatario_formatado(self):
         if len(self.infNFe.dest.CPF.valor):
             return self._formata_cpf(unicode(self.infNFe.dest.CPF.valor))
@@ -3064,7 +3074,7 @@ class NFe(XMLNFe):
         if len(self.infNFe.dest.enderDest.xCpl.valor.strip()):
             formatado += u' - ' + self.infNFe.dest.enderDest.xCpl.valor
 
-        return formatado
+        return parser.unescape(formatado)
 
     def cep_destinatario_formatado(self):
         return self._formata_cep(self.infNFe.dest.enderDest.CEP.valor)
@@ -3085,7 +3095,7 @@ class NFe(XMLNFe):
         formatado += u' - ' + self.infNFe.retirada.xBairro.valor
         formatado += u' - ' + self.infNFe.retirada.xMun.valor
         formatado += u'-' + self.infNFe.retirada.UF.valor
-        return formatado
+        return parser.unescape(formatado)
 
     def cnpj_entrega_formatado(self):
         return self._formata_cnpj(self.infNFe.entrega.CNPJ.valor)
@@ -3100,7 +3110,7 @@ class NFe(XMLNFe):
         formatado += u' - ' + self.infNFe.entrega.xBairro.valor
         formatado += u' - ' + self.infNFe.entrega.xMun.valor
         formatado += u'-' + self.infNFe.entrega.UF.valor
-        return formatado
+        return parser.unescape(formatado)
 
     def cnpj_transportadora_formatado(self):
         if self.infNFe.transp.transporta.CPF.valor:
@@ -3128,13 +3138,13 @@ class NFe(XMLNFe):
 
             da += self.infNFe.infAdic.infCpl.valor.replace(u'|', u'<br />')
 
-        return da
+        return parser.unescape(da)
 
     def canhoto_formatado(self):
         formatado = u'RECEBEMOS DE <b>'
         formatado += self.infNFe.emit.xNome.valor.upper()
         formatado += u'</b> OS PRODUTOS E/OU SERVIÇOS CONSTANTES DA <b>NOTA FISCAL ELETRÔNICA</b> INDICADA AO LADO'
-        return formatado
+        return parser.unescape(formatado)
         
     def cnpj_com_label_formatado(self):
         formatado = u'CNPJ: '
@@ -3142,14 +3152,14 @@ class NFe(XMLNFe):
         return formatado
         
     def razao_social_formatado(self):
-        return self.infNFe.emit.xNome.valor.upper()
+        return parser.unescape(self.infNFe.emit.xNome.valor.upper())
     
     def endereco_emitente_nfce_formatado(self):
         formatado = self.infNFe.emit.enderEmit.xLgr.valor
         formatado += u', ' + self.infNFe.emit.enderEmit.nro.valor
         formatado += u', ' + self.infNFe.emit.enderEmit.xMun.valor
         formatado += u', ' + self.infNFe.emit.enderEmit.UF.valor
-        return formatado
+        return parser.unescape(formatado)
 
     def frete_formatado(self):
         if self.infNFe.transp.modFrete.valor == 0:
